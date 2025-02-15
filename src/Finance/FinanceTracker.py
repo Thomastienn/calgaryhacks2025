@@ -29,7 +29,7 @@ class FinanceTracker:
     def expenseSpecificDay(self, year:int, month:int, day:int) -> float:
         total = 0
         for stuff in self.finance_list.getItem(year, month, day):
-            if stuff.isEssential():
+            if stuff.isExpenses():
                 total += stuff.getAmount()
         return total
     
@@ -50,10 +50,29 @@ class FinanceTracker:
             if stuff.type == Thing.INCOME:
                 total += stuff.getAmount()
         return total
+
+    def essensialThisMonth(self, year:int, month:int) -> float:
+        total_ess = 0
+        total_non = 0
+        for stuff in self.finance_list.getItemAllDay(year, month):
+            if stuff.isEssential():
+                total_ess += stuff.getAmount()
+            else:
+                total_non += stuff.getAmount()
+        return total_ess, total_non
         
     def incomeThisYear(self, year:int) -> float:
         total = 0
         for month in self.finance_list.getMonth(year):
             total += self.incomeThisMonth(year, month)
         return total
+    
+    def essensialThisYear(self, year:int) -> float:
+        total_ess = 0
+        total_non = 0
+        for month in self.finance_list.getMonth(year):
+            total_ess_month, total_non_month = self.essensialThisMonth(year, month)
+            total_ess += total_ess_month
+            total_non += total_non_month
+        return total_ess, total_non
     

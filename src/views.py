@@ -5,6 +5,7 @@ import customtkinter as ctk
 from tkcalendar import Calendar
 from src.Finance.FinanceTracker import FinanceTracker
 from src.Finance.Thing import Thing
+from src.models import PieChartApp
 from customtkinter import CTkFrame
 from datetime import datetime
 
@@ -50,7 +51,7 @@ class TabsView:
 class FinanceView:
     def __init__(self, parent):
         self.tracker = FinanceTracker()
-        self.frame = ctk.CTkFrame(parent)
+        self.frame = ctk.CTkFrame(parent, fg_color="#3C3D40")
         self.frame.pack_propagate(False)
         self.frame.pack(fill="both", expand=True)
         self.finance_table = ctk.CTkFrame(self.frame, width=700)
@@ -79,6 +80,14 @@ class FinanceView:
         self.finance_scroll_frame = ctk.CTkScrollableFrame(self.finance_table, fg_color="black")
         self.finance_scroll_frame.pack(fill="both", expand=True)
         
+        self.pie_chart_frame = ctk.CTkFrame(self.frame, fg_color="#3C3D40")
+        self.pie_chart_frame.pack(side="left", expand=True)
+        self.pie_chart_title = ctk.CTkLabel(self.pie_chart_frame, text="Overview of the Month", font=("Arial", 30, "bold"))
+        self.pie_chart_title.pack(side="top")
+        self.pie_chart = PieChartApp(self.pie_chart_frame)
+        self.income_month = ctk.CTkLabel(self.pie_chart_frame, text="$0")
+        self.spent_month = ctk.CTkLabel(self.pie_chart_frame, text="$0")
+        
         self.date_frames = {}
 
     def add_button_press(self):
@@ -104,8 +113,8 @@ class FinanceView:
             name_text = ctk.CTkLabel(finance_frame, text="$" + cost)
             name_text.pack(side="left", expand=True)
             
-                
-            self.tracker.put(name, cost, category, self.date_entry.get())
+            self.tracker.put(name, float(cost), category, self.date_entry.get())
+            self.pie_chart.update_chart(self.tracker)
             
         
 class TasksView:

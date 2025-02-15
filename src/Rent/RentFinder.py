@@ -27,6 +27,10 @@ class RentFinder:
             title = link_tag.text
             link = link_tag.get("href")
             address = card.find("li", {"aria-label": "Nearest intersection"}).find("p").text
-            house = House(title=title, cost=price, address=address,link=link)            
-            self.houses.append(house)
+            # house = House(title=title, cost=price, address=)            
+            # self.houses.
+            print(address)
             
+            
+# a = RentFinder()
+# a.getHouses()

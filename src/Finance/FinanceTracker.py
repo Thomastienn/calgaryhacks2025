@@ -8,7 +8,9 @@ class FinanceTracker:
         year,month,day = map(int, str(datetime.now().date()).split("-"))
         item = Thing(name=thing, amount=money,type=Thing.OPTIONS_STR.index(category))
         self.finance_list.addItem(year,month,day,item)
-        
+    
+    def getItem(self, year: int, month: int, day: int) -> list[Thing]:
+        return self.finance_list.d[year][month][day]
     
     def expenseSpecificDay(self, year:int, month:int, day:int) -> float:
         total = 0

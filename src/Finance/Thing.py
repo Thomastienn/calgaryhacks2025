@@ -8,6 +8,7 @@ class Thing:
     INVESTMENT = 6
     EMERGENCY_FUND = 7
     ESSENTIAL = {GROCERY, RENT, FOOD, SAVINGS, INVESTMENT, EMERGENCY_FUND}
+    OPTIONS = [GROCERY, INCOME, RENT, FOOD, SAVINGS, LEISURE, INVESTMENT, EMERGENCY_FUND]
     def __init__(self, name, amount,type):
         self.name = name
         self.amount = amount

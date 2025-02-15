@@ -4,9 +4,9 @@ from src.Finance.FinanceDict import FinanceDict
 class FinanceTracker:
     def __init__(self):
         self.finance_list = FinanceDict()
-    def put(self, thing: str, money: float, category: int) -> None:
+    def put(self, thing: str, money: float, category: str) -> None:
         year,month,day = map(int, str(datetime.now().date()).split("-"))
-        item = Thing(name=thing, amount=money,type=category)
+        item = Thing(name=thing, amount=money,type=Thing.OPTIONS_STR.index(category))
         self.finance_list.addItem(year,month,day,item)
         
     

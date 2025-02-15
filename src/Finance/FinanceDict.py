@@ -1,4 +1,4 @@
-from Thing import Thing
+from src.Finance.Thing import Thing
 class FinanceDict:
     def __init__(self):
         self.d = {}
@@ -7,7 +7,7 @@ class FinanceDict:
         if year not in self.d:
             self.d[year] = {}
         if month not in self.d[year]:
-            self.d[month] = {}
+            self.d[year][month] = {}
         if day not in self.d[year][month]:
             self.d[year][month][day] = []
         self.d[year][month][day].append(item)

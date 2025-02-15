@@ -1,6 +1,6 @@
 from datetime import datetime
-from Thing import Thing
-from FinanceDict import FinanceDict
+from src.Finance.Thing import Thing
+from src.Finance.FinanceDict import FinanceDict
 class FinanceTracker:
     def __init__(self):
         self.finance_list = FinanceDict()

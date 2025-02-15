@@ -1,4 +1,4 @@
-from Thing import Thing
+from src.Finance.Thing import Thing
 class FinanceDict:
     def __init__(self):
         self.d = {}

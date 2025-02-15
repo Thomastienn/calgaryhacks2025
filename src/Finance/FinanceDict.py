@@ -42,7 +42,7 @@ class FinanceDict:
             
     def emptyDate(self, year:int, month:int, day:int)->bool:
         if year not in self.d:
-            return False
+            return True
         if month not in self.d[year]:
-            return False
-        return day in self.d[year][month]
+            return True
+        return not(day in self.d[year][month])

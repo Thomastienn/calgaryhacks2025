@@ -1,6 +1,6 @@
 from datetime import datetime
-from src.Finance.Thing import Thing
-from src.Finance.FinanceDict import FinanceDict
+from Thing import Thing
+from FinanceDict import FinanceDict
 class FinanceTracker:
     def __init__(self):
         self.finance_list = FinanceDict()
@@ -15,6 +15,10 @@ class FinanceTracker:
     def getThingsToday(self) -> list[Thing]:
         year,month,day = map(int, str(datetime.now().date()).split("-"))
         return self.getThingsDate(year,month,day)
+    
+    def getAllThings(self):
+        yield from self.finance_list.allItem()
+
     def expenseSpecificDay(self, year:int, month:int, day:int) -> float:
         total = 0
         for stuff in self.finance_list.getItem(year, month, day):
@@ -45,4 +49,4 @@ class FinanceTracker:
         for month in self.finance_list.getMonth(year):
             total += self.incomeThisMonth(year, month)
         return total
-
+    

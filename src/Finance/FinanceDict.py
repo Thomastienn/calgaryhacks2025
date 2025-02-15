@@ -1,4 +1,4 @@
-from src.Finance.Thing import Thing
+from Thing import Thing
 class FinanceDict:
     def __init__(self):
         self.d = {}
@@ -34,8 +34,8 @@ class FinanceDict:
     
     def getItemAllMonth(self, year: int):
         for month in self.getMonth(year):
-            self.getItemAllDay(year, month)
+            yield from self.getItemAllDay(year, month)
             
     def allItem(self):
         for year in self.getYear():
-            self.getItemAllMonth(year)
+            yield from self.getItemAllMonth(year)

@@ -9,6 +9,7 @@ class Thing:
     EMERGENCY_FUND = 7
     ESSENTIAL = {GROCERY, RENT, FOOD, SAVINGS, INVESTMENT, EMERGENCY_FUND}
     OPTIONS = [GROCERY, INCOME, RENT, FOOD, SAVINGS, LEISURE, INVESTMENT, EMERGENCY_FUND]
+    OPTIONS_STR = ["Grocery", "Income", "Rent", "Food", "Savings", "Leisure", "Investment", "Emergency Fund"]
     def __init__(self, name, amount,type):
         self.name = name
         self.amount = amount

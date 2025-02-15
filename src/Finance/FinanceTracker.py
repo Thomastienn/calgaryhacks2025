@@ -50,6 +50,18 @@ class FinanceTracker:
             if stuff.type == Thing.INCOME:
                 total += stuff.getAmount()
         return total
+    
+    def incomeThisYear(self, year:int) -> float:
+        total = 0
+        for month in self.finance_list.getMonth(year):
+            total += self.incomeThisMonth(year, month)
+        return total
+    
+    def totalThisMonth(self, year:int, month:int) -> float:
+        total = 0
+        for stuff in self.finance_list.getItemAllDay(year, month):
+            total += stuff.getAmount()
+        return total
 
     def essensialThisMonth(self, year:int, month:int) -> float:
         total_ess = 0
@@ -61,11 +73,6 @@ class FinanceTracker:
                 total_non += stuff.getAmount()
         return total_ess, total_non
         
-    def incomeThisYear(self, year:int) -> float:
-        total = 0
-        for month in self.finance_list.getMonth(year):
-            total += self.incomeThisMonth(year, month)
-        return total
     
     def essensialThisYear(self, year:int) -> float:
         total_ess = 0
@@ -80,7 +87,9 @@ class FinanceTracker:
         year,_,_ = map(int, str(datetime.now().date()).split("-"))
         ans = {}
         for stuff in self.finance_list.getItemAllMonth(year):
-            type_str = Thing.OPTIONS_STR.index(stuff.type)
+            type_str = Thing.OPTIONS_STR[stuff.type]
+            if type_str not in ans:
+                ans[type_str] = 0
             ans[type_str] += stuff.getAmount()
         return ans
     

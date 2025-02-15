@@ -2,11 +2,9 @@
 import time
 
 import customtkinter as ctk
-from tkcalendar import Calendar
 from src.Finance.FinanceTracker import FinanceTracker
 from src.Finance.Thing import Thing
 from src.models import PieChartApp
-from customtkinter import CTkFrame
 from datetime import datetime
 
 import src.utils as utils
@@ -118,9 +116,44 @@ class FinanceView:
             
         
 class TasksView:
-    def __init__(self, parent):
-        self.frame = ctk.CTkFrame(parent)
-        self.frame.pack_propagate(False)
-        self.frame.pack(fill="both", expand=True)
+    def __init__(self, root):
+        self.root = root
+        self.root.config(bg="#333333")
+        ctk.set_appearance_mode("Dark")
+        self.task_entry = ctk.CTkEntry(root, width=300, placeholder_text="Enter the task", font=("Arial", 14))
+        self.task_entry.pack(pady=20)
+        self.add_button = ctk.CTkButton(self.root, text="Add Task", width=200, height=40, font=("Arial", 14),
+                                        command=self.add_task)
+        self.add_button.pack(pady=10)
+        self.tasks_frame = ctk.CTkFrame(self.root, height=200)
+        self.tasks_frame.pack(pady=10, )
+        self.task_checkboxes = []
+        self.remove_button = ctk.CTkButton(self.root, text="Remove Task", width=200, height=40, font=("Arial", 14),
+                                           command=self.remove_task)
+        self.remove_button.pack(pady=5)
+        self.clear_button = ctk.CTkButton(self.root, text="Clear All", width=200, height=40, font=("Arial", 14),
+                                          command=self.clear_all_task)
+        self.clear_button.pack(pady=5)
+
+    def add_task(self):
+        task = self.task_entry.get()
+        if task != "":
+            checkbox = ctk.CTkCheckBox(self.tasks_frame, text=task, font=("Arial", 14))
+            checkbox.pack(anchor="w", pady=2)
+            self.task_checkboxes.append(checkbox)
+            self.task_entry.delete(0, ctk.END)
+
+    def remove_task(self):
+        tasks_to_remove = [checkbox for checkbox in self.task_checkboxes if checkbox.get()]
+
+        if tasks_to_remove:
+            for checkbox in tasks_to_remove:
+                checkbox.destroy()
+                self.task_checkboxes.remove(checkbox)
+
+    def clear_all_task(self):
+        for checkbox in self.task_checkboxes:
+            checkbox.destroy()
+        self.task_checkboxes.clear()
 
 

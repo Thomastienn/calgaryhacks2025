@@ -4,10 +4,17 @@ from FinanceDict import FinanceDict
 class FinanceTracker:
     def __init__(self):
         self.finance_list = FinanceDict()
-    def put(self, thing: str, money: float, category: str) -> None:
-        year,month,day = map(int, str(datetime.now().date()).split("-"))
+    def put(self, thing: str, money: float, category: str, date:str=None) -> None:
+        # date: yyyy-mm-dd
+        dat = date
+        if date == None:
+            dat = str(datetime.now().date())
+        year,month,day = map(int, dat.split("-"))
         item = Thing(name=thing, amount=money,type=Thing.OPTIONS_STR.index(category))
         self.finance_list.addItem(year,month,day,item)
+        
+    def dateEmpty(self, year: int, month:int, day:int) -> bool:
+        return self.finance_list.emptyDate(year,month,day)
     
     def getThingsDate(self, year: int, month: int, day: int) -> list[Thing]:
         return self.finance_list.d[year][month][day]

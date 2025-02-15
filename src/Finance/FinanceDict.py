@@ -39,3 +39,10 @@ class FinanceDict:
     def allItem(self):
         for year in self.getYear():
             yield from self.getItemAllMonth(year)
+            
+    def emptyDate(self, year:int, month:int, day:int)->bool:
+        if year not in self.d:
+            return False
+        if month not in self.d[year]:
+            return False
+        return day in self.d[year][month]

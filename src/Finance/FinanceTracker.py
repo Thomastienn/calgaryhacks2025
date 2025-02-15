@@ -76,3 +76,11 @@ class FinanceTracker:
             total_non += total_non_month
         return total_ess, total_non
     
+    def portionCategory(self) -> dict:
+        year,_,_ = map(int, str(datetime.now().date()).split("-"))
+        ans = {}
+        for stuff in self.finance_list.getItemAllMonth(year):
+            type_str = Thing.OPTIONS_STR.index(stuff.type)
+            ans[type_str] += stuff.getAmount()
+        return ans
+    

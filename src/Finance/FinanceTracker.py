@@ -3,13 +3,18 @@ from src.Finance.Thing import Thing
 from src.Finance.FinanceDict import FinanceDict
 import os
 import pickle
+
+DATABASE_VIEW_DIR = "src/Databases/finance_track_view.pkl"
 class FinanceTracker:
     DATABASE_DIR = "src/Databases/finance_track.pkl"
-    def __init__(self):
-        self.finance_list = FinanceDict()
-        if os.path.exists(self.DATABASE_DIR):
-            with open(self.DATABASE_DIR, "rb") as inp:
-                self.finance_list = pickle.load(inp)
+    def __init__(self, fin_list=None):
+        if fin_list is None:
+            self.finance_list = FinanceDict()
+            if os.path.exists(self.DATABASE_DIR):
+                with open(self.DATABASE_DIR, "rb") as inp:
+                    self.finance_list = pickle.load(inp)
+        else:
+            self.finance_list = fin_list
     def put(self, thing: str, money: float, category: str, date:str=None) -> None:
         # date: yyyy-mm-dd
         dat = date
@@ -19,7 +24,7 @@ class FinanceTracker:
         item = Thing(name=thing, amount=money,type=Thing.OPTIONS_STR.index(category))
         self.finance_list.addItem(year,month,day,item)
         with open(self.DATABASE_DIR, "wb") as out:
-            pickle.dump(self.finance_list, out, pickle.HIGHEST_PROTOCOL)
+            pickle.dump(self.finance_list, out, pickle.HIGHEST_PROTOCOL)        
         
     def dateEmpty(self, year: int, month:int, day:int) -> bool:
         return self.finance_list.emptyDate(year,month,day)

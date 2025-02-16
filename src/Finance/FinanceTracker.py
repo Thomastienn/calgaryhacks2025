@@ -7,14 +7,11 @@ import pickle
 DATABASE_VIEW_DIR = "src/Databases/finance_track_view.pkl"
 class FinanceTracker:
     DATABASE_DIR = "src/Databases/finance_track.pkl"
-    def __init__(self, fin_list=None):
-        if fin_list is None:
-            self.finance_list = FinanceDict()
-            if os.path.exists(self.DATABASE_DIR):
-                with open(self.DATABASE_DIR, "rb") as inp:
-                    self.finance_list = pickle.load(inp)
-        else:
-            self.finance_list = fin_list
+    def __init__(self):
+        self.finance_list = FinanceDict()
+        if os.path.exists(self.DATABASE_DIR):
+            with open(self.DATABASE_DIR, "rb") as inp:
+                self.finance_list = pickle.load(inp)
     def put(self, thing: str, money: float, category: str, date:str=None) -> None:
         # date: yyyy-mm-dd
         dat = date

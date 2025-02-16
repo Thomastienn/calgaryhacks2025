@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
-from Job import Job
+from src.Job.Job import Job
 class JobFinder:
     def __init__(self):
         self.LINK = "https://www.part-time.ca/search-jobs/alberta/calgary/?sort_order=2"

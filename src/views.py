@@ -492,7 +492,7 @@ class RecipeViewer:
     def __init__(self, cooking_class, root, title, country, ingredients, recipes,difficulty, foods):
         self.frame = ctk.CTkFrame(root)
         self.frame.pack(expand=True, fill="both")
-        self.cooking_class = cooking_class # Large default window
+        self.cooking_class = cooking_class
         self.frame.configure(fg_color="#2B2B2B")  # Dark background
         self.difficulty = difficulty 
         # Store parameters
@@ -633,9 +633,22 @@ class CookingRecipesView:
         self.frame = ctk.CTkFrame(root)
         self.frame.pack(expand=True, fill="both")
         
+        root.update_idletasks()
+        self.loading()
+        root.update_idletasks()
+        
         self.recipe_generator = Recipes()
         self.main_menu()
-
+        
+        self.loading_frame.destroy()
+    
+    def loading(self):
+        self.loading_frame = ctk.CTkFrame(self.frame, width=self.frame.winfo_width()//2, height=self.frame.winfo_height()//2)
+        self.loading_frame.place(relx=0, rely=0)
+        self.loading_frame.pack_propagate(False)
+        loading_frame_text = ctk.CTkLabel(self.loading_frame, text="Retrieving Recipe Data...", font=("Arial", 100, "bold"))
+        loading_frame_text.pack(expand=True, fill="both")
+    
     def main_menu(self):
         for widget in self.frame.winfo_children():
             widget.destroy()

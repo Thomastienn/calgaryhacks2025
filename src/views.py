@@ -6,6 +6,7 @@ from src.Finance.FinanceTracker import FinanceTracker
 from src.Finance.Thing import Thing
 from src.models import PieChartApp
 from datetime import datetime
+from PIL import Image
 
 import src.utils as utils
 
@@ -117,43 +118,85 @@ class FinanceView:
         
 class TasksView:
     def __init__(self, root):
+        self.get_images()
+        self.buttons = []
         self.root = root
         self.root.config(bg="#333333")
         ctk.set_appearance_mode("Dark")
-        self.task_entry = ctk.CTkEntry(root, width=300, placeholder_text="Enter the task", font=("Arial", 14))
+
+        self.task_entry = ctk.CTkEntry(
+            root, width=300, placeholder_text="Enter the task", font=("Arial", 14)
+        )
         self.task_entry.pack(pady=20)
-        self.add_button = ctk.CTkButton(self.root, text="Add Task", width=200, height=40, font=("Arial", 14),
-                                        command=self.add_task)
+
+        self.add_button = ctk.CTkButton(
+            self.root, text="Add Task", width=200, height=40, font=("Arial", 14),
+            command=self.add_task
+        )
         self.add_button.pack(pady=10)
+
+        # Frame to hold all task items
         self.tasks_frame = ctk.CTkFrame(self.root, height=200)
-        self.tasks_frame.pack(pady=10, )
-        self.task_checkboxes = []
-        self.remove_button = ctk.CTkButton(self.root, text="Remove Task", width=200, height=40, font=("Arial", 14),
-                                           command=self.remove_task)
-        self.remove_button.pack(pady=5)
-        self.clear_button = ctk.CTkButton(self.root, text="Clear All", width=200, height=40, font=("Arial", 14),
-                                          command=self.clear_all_task)
+        self.tasks_frame.pack(pady=10, fill="both", expand=True)
+
+        self.clear_button = ctk.CTkButton(
+            self.root, text="Clear All", width=200, height=40, font=("Arial", 14),
+            command=self.clear_all_tasks
+        )
         self.clear_button.pack(pady=5)
+        
+    def get_images(self):
+        # Opens the images
+        try:
+            # Using .copy() keeps the image saved in memory so I don't have to keep opening the images to access them
+            with Image.open(
+                    "src/img/trash.png").copy() as trash_image, Image.open(
+                "src/img/trashRed.png").copy() as trash_red_image:
+                self.scaled_trash_image = ctk.CTkImage(trash_image, size=(70, 70))
+                self.scaled_trash_red_image = ctk.CTkImage(trash_red_image, size=(70, 70))
+        except FileNotFoundError as e:
+            print(f"Cannot access all image dependencies: {e}")
+            raise SystemExit
 
     def add_task(self):
-        task = self.task_entry.get()
-        if task != "":
-            checkbox = ctk.CTkCheckBox(self.tasks_frame, text=task, font=("Arial", 14))
-            checkbox.pack(anchor="w", pady=2)
-            self.task_checkboxes.append(checkbox)
+        task = self.task_entry.get().strip()
+        if task:
+            # Create a container frame for the task
+            task_frame = ctk.CTkFrame(self.tasks_frame, fg_color="transparent")
+            task_frame.pack(fill="x", pady=2, padx=10)
+
+            # Task checkbox on the left with a callback to toggle text color
+            task_checkbox = ctk.CTkCheckBox(
+                task_frame, text=task, font=("Arial", 14),
+                command=lambda: self.toggle_task(task_checkbox)
+            )
+            task_checkbox.pack(side="left", padx=(10, 0))
+
+            # Remove button on the right
+            remove_button = ctk.CTkButton(
+                task_frame, text="", fg_color="transparent", width=70, height=70, image=self.scaled_trash_image,
+                command=lambda: self.remove_task_item(task_frame)
+            )
+            index = len(self.buttons)
+            self.buttons.append(remove_button)
+            remove_button.bind("<Enter>", lambda: self.on_hover(index))
+            remove_button.pack(side="right", padx=(0, 10))
+
             self.task_entry.delete(0, ctk.END)
+    
+    def on_hover(self, index):
+        self.buttons[index].config(image=self.scaled_trash_red_image)
 
-    def remove_task(self):
-        tasks_to_remove = [checkbox for checkbox in self.task_checkboxes if checkbox.get()]
+    def toggle_task(self, checkbox):
+        # Change text color based on whether the checkbox is checked
+        if checkbox.get():
+            checkbox.configure(text_color="grey")
+        else:
+            checkbox.configure(text_color="white")
 
-        if tasks_to_remove:
-            for checkbox in tasks_to_remove:
-                checkbox.destroy()
-                self.task_checkboxes.remove(checkbox)
+    def remove_task_item(self, task_frame):
+        task_frame.destroy()
 
-    def clear_all_task(self):
-        for checkbox in self.task_checkboxes:
-            checkbox.destroy()
-        self.task_checkboxes.clear()
-
-
+    def clear_all_tasks(self):
+        for widget in self.tasks_frame.winfo_children():
+            widget.destroy()

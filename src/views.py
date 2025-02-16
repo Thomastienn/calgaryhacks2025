@@ -13,6 +13,7 @@ from src.Finance.FinanceTracker import FinanceTracker
 from src.Finance.Thing import Thing
 from src.FrontPage.QuoteReceiver import QuoteReceiver
 from src.Job.JobFinder import JobFinder
+from src.Meals.Recipes import Recipes
 from src.models import PieChartApp
 from src.Rent.RentFinder import RentFinder
 from datetime import datetime, date, timedelta
@@ -133,6 +134,8 @@ class TabsView:
         self.house_button.pack(side="left", expand=True)
         self.jobs_button = ctk.CTkButton(self.frame, text="Jobs", command=self.jobs_button_click)
         self.jobs_button.pack(side="left", expand=True)
+        self.recipies_button = ctk.CTkButton(self.frame, text="Recipies", command=self.recipies_button_click)
+        self.recipies_button.pack(side="left",expand=True)
         
     def switch_view(self, new_view):
         for widget in self.parent.winfo_children():
@@ -153,6 +156,9 @@ class TabsView:
     
     def jobs_button_click(self):
         self.switch_view(JobsView)
+    
+    def recipies_button_click(self):
+        self.switch_view(CookingRecipesView)
 
 class FinanceView:
     def __init__(self, parent):
@@ -465,7 +471,6 @@ class JobsView:
             job_description = job.desc
             title_label = ctk.CTkLabel(job_frame, text=f"{job_title}", font=("Arial", 20, "bold"))
             title_label.pack(anchor="w", padx=5, pady=5)
-            print(job_title)
             company_label = ctk.CTkLabel(job_frame, text=f"{company}", font=("Arial", 14,))
             company_label.pack(anchor="w", padx=5, pady=5)
             location_label = ctk.CTkLabel(job_frame, text=f"{location}", font=("Arial", 14,))
@@ -476,10 +481,242 @@ class JobsView:
             salary_label.pack(anchor="w", padx=5, pady=5)
 
             job_description_label = ctk.CTkLabel(job_frame, text=f"Job Description: {job_description}",
-                                                 font=("Arial", 14,))
+                                                 font=("Arial", 14,), wraplength=800)
             job_description_label.pack(anchor="w", padx=5, pady=5)
         refresh_button = ctk.CTkButton(self.scroll_frame, text="Refresh")
         refresh_button.pack(side="right", padx=30,pady=5)
+
+
+
+class RecipeViewer:
+    def __init__(self, cooking_class, root, title, country, ingredients, recipes,difficulty, foods):
+        self.frame = ctk.CTkFrame(root)
+        self.frame.pack(expand=True, fill="both")
+        self.cooking_class = cooking_class # Large default window
+        self.frame.configure(fg_color="#2B2B2B")  # Dark background
+        self.difficulty = difficulty 
+        # Store parameters
+        self.country = country  # Country of origin
+        self.ingredients = ingredients  # List of ingredients
+        self.recipes = recipes  # List of recipes
+        self.foods = foods
+
+        # Create the title label at the top
+        self.create_title()
+
+        # Create the country box (top-right)
+        self.create_country_box()
+
+        # Create the main content section (Ingredients & Recipes)
+        self.create_content_frame()
+
+        # Create bottom back button
+        self.create_back_button()
+
+    def create_title(self):
+        """Creates the centered title at the top."""
+        self.title_label = ctk.CTkLabel(
+            self.frame,
+            text="Recipe Viewer",
+            font=("Arial", 50, "bold"),  # Large title font
+            text_color="white"
+        )
+        self.title_label.pack(pady=20)  # Space below the title
+
+    def create_country_box(self):
+        """Creates a country display box in the top-right corner."""
+        country_frame = ctk.CTkFrame(self.frame, fg_color="#3C3D40", corner_radius=10, width=220, height=60)  # ✅ Wider box
+        country_frame.place(relx=0.85, rely=0.05, anchor="ne")  # ✅ Position stays the same
+
+        # Create a frame inside for horizontal layout
+        inner_frame = ctk.CTkFrame(country_frame, fg_color="transparent")
+        inner_frame.pack(expand=True, fill="both", padx=10, pady=10)
+
+        # "Country:" label
+        country_label = ctk.CTkLabel(
+            inner_frame,
+            text="Country:",
+            font=("Arial", 16, "bold"),
+            text_color="white"
+        )
+        country_label.pack(side="left", padx=5)  # ✅ Align to the left
+
+        # Country name label (aligned horizontally)
+        country_name_label = ctk.CTkLabel(
+            inner_frame,
+            text=self.country,
+            font=("Arial", 18, "bold"),
+            text_color="yellow"
+        )
+        country_name_label.pack(side="left", padx=5)  # ✅ Aligned next to "Country:"
+
+    def create_content_frame(self):
+        """Creates the main frame that contains Ingredients and Recipes."""
+        content_frame = ctk.CTkFrame(self.frame, fg_color="transparent")
+        content_frame.pack(expand=True, fill="both", padx=20, pady=10)
+
+        # Left Side: Ingredients
+        self.create_ingredients_section(content_frame)
+
+        # Vertical Divider Line
+        divider = ctk.CTkFrame(content_frame, fg_color="white", width=2)
+        divider.pack(side="left", fill="y", padx=10)
+
+        # Right Side: Recipes
+        self.create_recipes_section(content_frame)
+
+    def create_ingredients_section(self, parent):
+        """Creates the Ingredients box on the left side."""
+        ingredients_frame = ctk.CTkFrame(parent, fg_color="#3C3D40", corner_radius=10)
+        ingredients_frame.pack(side="left", expand=True, fill="both", padx=10, pady=10)
+
+        # Title for Ingredients
+        ingredients_title = ctk.CTkLabel(
+            ingredients_frame,
+            text="Ingredients",
+            font=("Arial", 30, "bold"),
+            text_color="white"
+        )
+        ingredients_title.pack(pady=10)
+
+        # Display each ingredient inside the box
+        for ingredient in self.ingredients:
+            label = ctk.CTkLabel(
+                ingredients_frame,
+                text=f"- {ingredient}",
+                font=("Arial", 18),
+                text_color="white"
+            )
+            label.pack(anchor="w", padx=20, pady=2)
+
+    def create_recipes_section(self, parent):
+        """Creates the Recipes box on the right side."""
+        recipes_frame = ctk.CTkFrame(parent, fg_color="#3C3D40", corner_radius=10)
+        recipes_frame.pack(side="right", expand=True, fill="both", padx=10, pady=10)
+
+        # Title for Recipes
+        recipes_title = ctk.CTkLabel(
+            recipes_frame,
+            text="Instructions",
+            font=("Arial", 30, "bold"),
+            text_color="white"
+        )
+        recipes_title.pack(pady=10)
+
+        # Display each recipe inside the box
+        for recipe in self.recipes.split("\n"):
+            label = ctk.CTkLabel(
+                recipes_frame,
+                text=f"- {recipe}",
+                font=("Arial", 18),
+                text_color="white"
+            )
+            label.pack(anchor="w", padx=20, pady=2)
+
+    def create_back_button(self):
+        """Creates the back button centered at the bottom."""
+        back_button = ctk.CTkButton(
+            self.frame,
+            text="Back",
+            font=("Arial", 20, "bold"),
+            fg_color="#D32F2F",  # Red color
+            hover_color="#E53935",
+            width=150,
+            height=50,
+            corner_radius=10,
+            command=lambda: self.cooking_class.create_recipe_page(self.difficulty,self.foods)  # Placeholder function
+        )
+        back_button.pack(side="bottom", pady=20)
+
+class CookingRecipesView:
+    def __init__(self, root):
+        self.frame = ctk.CTkFrame(root)
+        self.frame.pack(expand=True, fill="both")
+        
+        self.recipe_generator = Recipes()
+        self.main_menu()
+
+    def main_menu(self):
+        for widget in self.frame.winfo_children():
+            widget.destroy()
+
+        label = ctk.CTkLabel(self.frame, text="Cooking Recipes", font=("Arial", 60, "bold"))
+        label.pack(pady=30)
+
+        button1 = ctk.CTkButton(self.frame, text="Easy", width=300, height=300, corner_radius=50,
+                                command=self.easy_recipes,
+                                fg_color="green", font=("Arial", 40, "bold"), hover_color="#006400")
+        button1.pack(side="left", padx=10, expand=True)
+
+        button2 = ctk.CTkButton(self.frame, text="Medium", width=300, height=300, corner_radius=50,
+                                command=self.medium_recipes,
+                                fg_color="orange", font=("Arial", 40, "bold"), hover_color="#FF8C00")
+        button2.pack(side="left", padx=10, expand=True)
+
+        button3 = ctk.CTkButton(self.frame, text="Hard", width=300, height=300, corner_radius=50,
+                                command=self.hard_recipes,
+                                fg_color="red", font=("Arial", 40, "bold"), hover_color="#8B0000")
+        button3.pack(side="left", padx=10, expand=True)
+
+    def create_recipe_page(self, difficulty, food_names):
+        for widget in self.frame.winfo_children():
+            widget.destroy()
+        self.recipe_frame = ctk.CTkFrame(self.frame)
+        self.recipe_frame.pack(expand=True, fill="both")
+        self.diff = difficulty
+        self.foods = food_names
+        label = ctk.CTkLabel(self.recipe_frame, text=f"{difficulty} Recipes", font=("Arial", 50, "bold"), text_color="white")
+        label.pack(pady=20)
+
+        self.favorites = {food: False for food in food_names}
+
+        for food in food_names:
+            frame = ctk.CTkFrame(self.recipe_frame, fg_color="transparent")
+            frame.pack(pady=10)
+
+            button = ctk.CTkButton(frame, text=food.name, font=("Arial", 30, "bold"), fg_color="#4C4F52",
+                                   hover_color="#676A6D",
+                                   corner_radius=15, text_color="white",
+                                   command=lambda f=food: self.food_clicked(f))
+            button.pack(side="left", padx=20, expand=True)
+
+            star_var = ctk.StringVar(value="☆")
+
+            def toggle_star(f=food, var=star_var):
+                self.favorites[f] = not self.favorites[f]
+                var.set("★" if self.favorites[f] else "☆")
+
+            star_button = ctk.CTkButton(frame, textvariable=star_var, font=("Arial", 40),
+                                        fg_color="transparent", text_color="yellow", hover_color="#676A6D",
+                                        command=toggle_star)
+            star_button.pack(side="right", padx=20, expand=True)
+
+        hotbar_frame = ctk.CTkFrame(self.recipe_frame, fg_color="#3A3D40")
+        hotbar_frame.pack(side="bottom", fill="x")
+
+        refresh_button = ctk.CTkButton(hotbar_frame, text="Refresh", font=("Arial", 30, "bold"), fg_color="#FF9800",
+                                       hover_color="#FFA726", corner_radius=10,
+                                       command=lambda: print("Refresh clicked!"))
+        refresh_button.pack(side="left", pady=5, expand=True)
+
+        back_button = ctk.CTkButton(hotbar_frame, text="Back", font=("Arial", 30, "bold"), fg_color="#D32F2F",
+                                    hover_color="#E53935", corner_radius=10,
+                                    command=self.main_menu)
+        back_button.pack(side="right", pady=5, expand=True)
+
+    def food_clicked(self, food):
+        for widget in self.frame.winfo_children():
+            widget.destroy()
+        RecipeViewer(self, self.frame,  food.name, food.country, food.ingredients, food.instructions,self.diff, self.foods)
+
+    def easy_recipes(self):
+        self.create_recipe_page("Easy", self.recipe_generator.getEasy())
+
+    def medium_recipes(self):
+        self.create_recipe_page("Medium", self.recipe_generator.getMedium())
+
+    def hard_recipes(self):
+        self.create_recipe_page("Hard",  self.recipe_generator.getHard())
 
 
 class ModernCalendar:
@@ -618,5 +855,3 @@ class ModernCalendar:
     def dot_update(self):
         self.buttons_with_tasks.append(self.get_selected_date())
         self.draw_calendar()
-
-        

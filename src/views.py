@@ -423,10 +423,10 @@ class RentingView:
         webbrowser.open(url)
     
     def loading(self):
-        self.loading_frame = ctk.CTkFrame(self.frame, width=self.frame.winfo_width()//2, height=self.frame.winfo_height()//2)
+        self.loading_frame = ctk.CTkFrame(self.frame, width=self.frame.winfo_width()//2, height=self.frame.winfo_height()//2, fg_color=Constants.DARK_GREY)
         self.loading_frame.pack(fill="both", expand=True)
         self.loading_frame.pack_propagate(False)
-        loading_frame_text = ctk.CTkLabel(self.loading_frame, text="Retrieving House Data...", font=(Constants.FONT, 100, "bold"))
+        loading_frame_text = ctk.CTkLabel(self.loading_frame, text="Retrieving House Data...", font=(Constants.FONT, 100, "bold"), text_color=Constants.MILK)
         loading_frame_text.pack(expand=True, fill="both")
         
     def create_house(self, title, cost, address, link):
@@ -456,14 +456,14 @@ class JobsView:
         self.loading()
         root.update_idletasks()
         
-        self.scroll_frame = ctk.CTkScrollableFrame(self.frame)
+        self.scroll_frame = ctk.CTkScrollableFrame(self.frame, fg_color=Constants.DARK_GREY)
         self.scroll_frame.pack(expand=True, fill="both")
-        self.header = ctk.CTkLabel(self.scroll_frame, text="Job Postings Near You", font=("Arial", 40, "bold"))
+        self.header = ctk.CTkLabel(self.scroll_frame, text="Job Postings Near You", font=(Constants.FONT, 40, "bold"))
 
         root.update_idletasks()
         self.header.pack(side="top", expand=True, pady=10)
 
-        self.job_list_frame = ctk.CTkFrame(self.scroll_frame)
+        self.job_list_frame = ctk.CTkFrame(self.scroll_frame,fg_color=Constants.DARK_GREY)
         self.job_list_frame.pack(fill="x", padx=20)
 
         self.job_finder = JobFinder()
@@ -474,11 +474,12 @@ class JobsView:
 
     def loading(self):
         self.loading_frame = ctk.CTkFrame(self.frame, width=self.frame.winfo_width() // 2,
-                                          height=self.frame.winfo_height() // 2)
+                                          height=self.frame.winfo_height() // 2,
+                                          fg_color=Constants.DARK_GREY)
         self.loading_frame.pack_propagate(False)
         self.loading_frame.pack(fill="both", expand=True)
         loading_frame_text = ctk.CTkLabel(self.loading_frame, text="Retrieving Job Info...",
-                                          font=(Constants.FONT, 100, "bold"))
+                                          font=(Constants.FONT, 100, "bold"),text_color=Constants.MILK)
         loading_frame_text.pack(expand=True, fill="both")
 
     def open_link(self, url):
@@ -486,12 +487,12 @@ class JobsView:
 
     def display_jobs(self, job_data):
         if not job_data:
-            no_job_label = ctk.CTkLabel(self.job_list_frame, text="No jobs found.", font=("Arial", 14))
+            no_job_label = ctk.CTkLabel(self.job_list_frame, text="No jobs found.", font=(Constants.FONT, 14))
             no_job_label.pack(pady=20)
             return
 
         for job in job_data:
-            job_frame = ctk.CTkFrame(self.job_list_frame, border_width=2, corner_radius=8)
+            job_frame = ctk.CTkFrame(self.job_list_frame, border_width=2, corner_radius=8, fg_color=Constants.DARK_BROWN)
             job_frame.pack(fill="x", pady=10, padx=10)
             job_title = job.title
             company = job.company
@@ -501,27 +502,24 @@ class JobsView:
             link = job.link
             job_description = job.desc
 
-            title_label = ctk.CTkLabel(job_frame, text=f"{job_title}", font=("Arial", 20, "bold"))
-            title_label.pack(anchor="w", padx=5, pady=5)
-            company_label = ctk.CTkLabel(job_frame, text=f"{company}", font=("Arial", 14,))
-            company_label.pack(anchor="w", padx=5, pady=5)
-            location_label = ctk.CTkLabel(job_frame, text=f"{location}", font=("Arial", 14,))
-            location_label.pack(anchor="w", padx=5, pady=5)
-            date_posted_label = ctk.CTkLabel(job_frame, text=f"{date_posted}", font=("Arial", 14,))
-            date_posted_label.pack(anchor="w", padx=5, pady=5)
-            salary_label = ctk.CTkLabel(job_frame, text=f"Salary: {salary}", font=("Arial", 14,))
-            salary_label.pack(anchor="w", padx=5, pady=5)
+            title_label = ctk.CTkLabel(job_frame, text=f"{job_title}", font=(Constants.FONT, 24, "bold"))
+            title_label.pack(anchor="w", padx=10, pady=5)
+            company_label = ctk.CTkLabel(job_frame, text=f"{company}", font=(Constants.FONT, 16,"bold"))
+            company_label.pack(anchor="w", padx=10, pady=5)
+            location_label = ctk.CTkLabel(job_frame, text=f"{location}", font=(Constants.FONT, 14,))
+            location_label.pack(anchor="w", padx=10, pady=5)
+            date_posted_label = ctk.CTkLabel(job_frame, text=f"{date_posted}", font=(Constants.FONT, 14,))
+            date_posted_label.pack(anchor="w", padx=10, pady=5)
+            salary_label = ctk.CTkLabel(job_frame, text=f"Salary: {salary}", font=(Constants.FONT, 14,))
+            salary_label.pack(anchor="w", padx=10, pady=5)
 
 
 
             if link:
                 link_label = ctk.CTkLabel(job_frame, text="Click here to view job", font=("Arial", 16, "underline"),
                                           text_color="#ADD8E6", cursor="hand2")
-                link_label.pack(anchor="w", padx=5, pady=5)
+                link_label.pack(anchor="w", padx=10, pady=5)
                 link_label.bind("<Button-1>", lambda e, url=link: self.open_link(url))
-
-        refresh_button = ctk.CTkButton(self.scroll_frame, text="Refresh")
-        refresh_button.pack(side="right", padx=30, pady=5)
 
 
 class RecipeViewer:

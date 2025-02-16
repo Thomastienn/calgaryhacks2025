@@ -20,7 +20,7 @@ class PieChartApp:
         if len(self.labels) > len(self.dark_theme_colors):
             raise ValueError("Not enough colors in the dark_theme_colors list.")
 
-        self.fig = Figure(figsize=(15, 10), dpi=100, facecolor="#3C3D40")
+        self.fig = Figure(figsize=(15, 10), dpi=100, facecolor=Constants.ALTERNATE_GREY)
         self.ax = self.fig.add_subplot(111)
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.root)
         self.draw_pie_chart()

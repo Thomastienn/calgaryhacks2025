@@ -9,6 +9,7 @@ class Thing:
     EMERGENCY_FUND = 7
     ESSENTIAL = {GROCERY, RENT, FOOD, SAVINGS, INVESTMENT, EMERGENCY_FUND}
     OPTIONS = [GROCERY, INCOME, RENT, FOOD, SAVINGS, LEISURE, INVESTMENT, EMERGENCY_FUND]
+    EXPENSES = {GROCERY, RENT, FOOD, LEISURE, INVESTMENT, EMERGENCY_FUND}
     OPTIONS_STR = ["Grocery", "Income", "Rent", "Food", "Savings", "Leisure", "Investment", "Emergency Fund"]
     def __init__(self, name, amount,type):
         self.name = name
@@ -20,3 +21,6 @@ class Thing:
     
     def isEssential(self) -> bool:
         return self.type in self.ESSENTIAL
+    
+    def isExpenses(self):
+        return self.type in self.EXPENSES

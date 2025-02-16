@@ -16,14 +16,21 @@ class FinanceDict:
         for year in self.d:
             yield year
     def getMonth(self, year:int):
+        if year not in self.d:
+            return
         for month in self.d[year]:
             yield month
     
     def getDay(self, year:int, month:int):
+        if year not in self.d or month not in self.d[year]:
+            return
         for day in self.d[year][month]:
             yield day
     
     def getItem(self,year:int, month:int, day:int):
+        if year not in self.d or month not in self.d[year] or \
+                day not in self.d[year][month]:
+            return
         for stuff in self.d[year][month][day]:
             yield stuff
             

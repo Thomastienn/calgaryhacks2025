@@ -194,13 +194,19 @@ class FinanceView:
         self.finance_scroll_frame = ctk.CTkScrollableFrame(self.finance_table, fg_color=Constants.LIGHT_GREY)
         self.finance_scroll_frame.pack(fill="both", expand=True)
         
-        self.pie_chart_frame = ctk.CTkFrame(self.frame, fg_color="#3C3D40")
+        self.pie_chart_frame = ctk.CTkFrame(self.frame, fg_color=Constants.ALTERNATE_GREY)
         self.pie_chart_frame.pack(side="left", fill="both", expand=True)
+        year, month, _ = map(int, self.date_entry.get().split("-"))
+        income = self.tracker.incomeThisMonth(year,month)
+        expense = self.tracker.expenseSpecificMonth(year,month)
         self.pie_chart_title = ctk.CTkLabel(self.pie_chart_frame, text="Overview of the Month", font=("Segoe UI", 30, "bold"))
+        self.income_month = ctk.CTkLabel(self.pie_chart_frame, text=f"Income for the month: ${income}", font=(Constants.FONT, 16, "bold"))
+        self.spent_month = ctk.CTkLabel(self.pie_chart_frame, text=f"Expenses for the month: ${expense}", font=(Constants.FONT, 16, "bold"))
         self.pie_chart_title.pack(side="top")
+        self.income_month.pack()
+        self.spent_month.pack()
         self.pie_chart = PieChartApp(self.pie_chart_frame)
-        self.income_month = ctk.CTkLabel(self.pie_chart_frame, text="$0")
-        self.spent_month = ctk.CTkLabel(self.pie_chart_frame, text="$0")
+        self.pie_chart_frame.pack()
         
         self.date_frames = {}
         for year in self.tracker.finance_list.getYear():
@@ -258,6 +264,10 @@ class FinanceView:
             amount_text.pack(side="left", expand=True)
             
             self.tracker.put(name, float(cost), category, self.date_entry.get())
+            income = self.tracker.incomeThisMonth(year, month)
+            expense = self.tracker.expenseSpecificMonth(year, month)
+            self.income_month.configure(text=f"Income for the month: ${income}")
+            self.spent_month.configure(text=f"Expenses for the month: ${expense}")
             self.pie_chart.update_chart(self.tracker)
             
         

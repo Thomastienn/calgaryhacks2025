@@ -1,6 +1,7 @@
 # Handle UI components and layout here
 import math
 import time
+import webbrowser
 
 import customtkinter as ctk
 from customtkinter import CTkFrame
@@ -47,14 +48,20 @@ class TabsView:
         self.house_button = ctk.CTkButton(self.frame, text="Renting", command=self.house_button_click)
         self.house_button.pack(side="left", padx=50)
         
+    def switch_view(self, new_view):
+        for widget in self.parent.winfo_children():
+            if widget != self.frame:
+                widget.destroy()
+        new_view(self.parent)
+        
     def finance_button_click(self):
-        FinanceView(self.parent)
+        self.switch_view(FinanceView)
     
     def tasks_button_click(self):
-        TasksView(self.parent)
+        self.switch_view(TasksView)
         
     def house_button_click(self):
-        RentingView(self.parent)
+        self.switch_view(RentingView)
 
 class FinanceView:
     def __init__(self, parent):
@@ -217,6 +224,10 @@ class RentingView:
         self.frame.pack(fill="both", expand=True)
         self.scrolling_frame = ctk.CTkScrollableFrame(self.frame)
         self.scrolling_frame.pack(fill="both", expand=True)
+        self.loading()
+        parent.update_idletasks()
+        self.rent_title = ctk.CTkLabel(self.scrolling_frame, text="Houses for rent near you", font=("Arial", 30, "bold"))
+        self.rent_title.pack(side="top", expand=True, fill="x")
         self.house_rows = []
 
         self.renter = RentFinder()
@@ -231,8 +242,7 @@ class RentingView:
             self.create_house(house.title, house.cost, house.address, house.link)
             count += 1
         
-        self.refresh_button = ctk.CTkButton(self.scrolling_frame, text="Refresh")
-        self.refresh_button.pack(side="top", expand=True)
+        self.loading_frame.destroy()
     
     def get_images(self):
         try:
@@ -244,10 +254,20 @@ class RentingView:
             print(f"Cannot access all image dependencies: {e}")
             raise SystemExit
     
+    def callback(self, url):
+        webbrowser.open(url)
+    
+    def loading(self):
+        self.loading_frame = ctk.CTkFrame(self.frame, width=self.frame.winfo_width()//2, height=self.frame.winfo_height()//2)
+        self.loading_frame.place(relx=0, rely=0)
+        self.loading_frame.pack_propagate(False)
+        loading_frame_text = ctk.CTkLabel(self.loading_frame, text="Retrieving House Data...", font=("Arial", 100, "bold"))
+        loading_frame_text.pack(expand=True, fill="both")
+        
     def create_house(self, title, cost, address, link):
         house_frame = ctk.CTkFrame(self.current_house_row, width=400, height=400, fg_color="black")
         house_frame.pack_propagate(False)
-        house_cost = ctk.CTkLabel(house_frame, text=f"${cost}")
+        house_cost = ctk.CTkLabel(house_frame, text=f"${cost}/month")
         house_cost.pack(side="top", expand=True)
         house_img = ctk.CTkLabel(house_frame, text="", image=self.scaled_house_image, fg_color="transparent")
         house_img.pack(side="top", expand=True)
@@ -255,7 +275,8 @@ class RentingView:
         house_title.pack(side="top", expand=True)
         house_address = ctk.CTkLabel(house_frame, text=f"{address}")
         house_address.pack(side="top", expand=True)
-        house_link = ctk.CTkLabel(house_frame, text=f"{link}")
+        house_link = ctk.CTkLabel(house_frame, text="View more information", text_color="blue", underline=0, cursor="hand2")
+        house_link.bind("<Button-1>", lambda e: self.callback(link))
         house_link.pack(side="top", expand=True)
         house_frame.pack(side="left", expand=True, padx=10)
         

@@ -4,7 +4,7 @@ from src.Finance.FinanceDict import FinanceDict
 import os
 import pickle
 class FinanceTracker:
-    DATABASE_DIR = "calgaryhacks2025/src/Databases/finance_track.pkl"
+    DATABASE_DIR = "src/Databases/finance_track.pkl"
     def __init__(self):
         self.finance_list = FinanceDict()
         if os.path.exists(self.DATABASE_DIR):

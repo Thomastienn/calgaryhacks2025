@@ -436,7 +436,7 @@ class RentingView:
         house_cost.pack(side="top", expand=True)
         house_img = ctk.CTkLabel(house_frame, text="", image=self.scaled_house_image, fg_color="transparent")
         house_img.pack(side="top", expand=True)
-        house_title = ctk.CTkLabel(house_frame, text=f"{title}",font=(Constants.FONT, 16, "bold"),text_color=Constants.MILK)
+        house_title = ctk.CTkLabel(house_frame, text=f"{title}",font=(Constants.FONT, 14, "bold"),text_color=Constants.MILK)
         house_title.pack(side="top", expand=True)
         house_address = ctk.CTkLabel(house_frame, text=f"{address}", font=(Constants.FONT, 13),text_color=Constants.MILK)
         house_address.pack(side="top", expand=True)
@@ -884,7 +884,7 @@ class ModernCalendar:
             btn_fg = "#2c3e50" if in_current  else "#bdc3c7"
             btn_bg = "#CBAC8A" if self.selected_date == cell_date else "#ffffff"
             if cell_date in self.buttons_with_tasks:
-                btn_bg="#FDFCF9"
+                btn_bg="#E5D6C0"
             btn = ctk.CTkButton(
                 self.buttons_frame, text=str(cell_date.day),
                 font=("Segoe UI", 12, "bold"),

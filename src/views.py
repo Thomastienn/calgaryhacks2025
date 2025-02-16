@@ -268,6 +268,8 @@ class RentingView:
         house_frame = ctk.CTkFrame(self.current_house_row, width=400, height=400, fg_color="black")
         house_frame.pack_propagate(False)
         house_cost = ctk.CTkLabel(house_frame, text=f"${cost}/month")
+        if cost is None:
+            house_cost.configure(text="Inquire for price")
         house_cost.pack(side="top", expand=True)
         house_img = ctk.CTkLabel(house_frame, text="", image=self.scaled_house_image, fg_color="transparent")
         house_img.pack(side="top", expand=True)

@@ -25,7 +25,7 @@ import src.utils as utils
 class MainView(ctk.CTk):
     def __init__(self):
         super().__init__()
-        self.title_text = "Hackathon"
+        self.title_text = "HandiGo"
         self.title(self.title_text)
         self.geometry("1200x600")
         
@@ -43,8 +43,9 @@ class StartView:
 class MainMenu:
     def __init__(self, root, title, quote_position=0.3):
         self.root = root
+        self.root.configure(fg_color=Constants.DARK_GREY)
         self.frame = ctk.CTkFrame(root, fg_color=Constants.DARK_GREY)
-        self.frame.pack(fill="both", expand=True)
+        self.frame.pack(fill="x", expand=True)
 
         # Store parameters
         self.title_text = title
@@ -64,42 +65,42 @@ class MainMenu:
         self.create_enter_button()
 
     def create_main_title(self):
-        """Creates the title at the top center."""
+        header_frame = ctk.CTkFrame(self.frame, fg_color=Constants.DARK_GREY)
+        header_frame.pack(pady=80)
         title_label = ctk.CTkLabel(
-            self.frame,
+            header_frame,
             text=self.title_text,
             font=(Constants.FONT, 40, "bold"),
-            text_color="white"
+            text_color="white",
+            fg_color=Constants.DARK_GREY
         )
-        title_label.place(relx=0.5, rely=0.05, anchor="center")  # Centered at the top
+        subtitle_label = ctk.CTkLabel(header_frame, text="Your all-in-one app supporting transition to independence", font=(Constants.FONT, 20, "bold"))
+        title_label.pack(expand=True)
+        subtitle_label.pack(pady=10)
 
     def create_quote_section(self):
-        """Creates the centered quote section with author."""
         quote_frame = ctk.CTkFrame(self.frame, fg_color="transparent")
-        quote_frame.place(relx=0.5, rely=self.quote_position+0.08, anchor="center")  # ✅ Position is now adjustable
+        quote_frame.pack(pady=10)
 
-        # Quote text (Make it stand out)
         quote_label = ctk.CTkLabel(
             quote_frame,
             text=f'“{self.quote}”',
-            font=(Constants.FONT, 30, "bold"),  # Large and bold for emphasis
+            font=(Constants.FONT, 30, "bold"),
             text_color="white",
             wraplength=750,
             justify="center"
         )
-        quote_label.pack(pady=20)
+        quote_label.pack()
 
-        # Author text (Smaller, below the quote)
         author_label = ctk.CTkLabel(
             quote_frame,
             text=f"- {self.author}",
             font=("Segoe UI", 18, "italic"),
             text_color="lightgray"
         )
-        author_label.pack()
+        author_label.pack(expand=True)
 
     def create_enter_button(self):
-        """Creates the enter button centered at the bottom."""
         enter_button = ctk.CTkButton(
             self.frame,
             text="Enter",
@@ -112,7 +113,7 @@ class MainMenu:
             corner_radius=10,
             command=self.enter_pressed  # Placeholder function
         )
-        enter_button.pack(side="bottom", pady=40)
+        enter_button.pack(side="top", pady=80)
 
     def enter_pressed(self):
         TabsView(self.root)
@@ -877,7 +878,6 @@ class ModernCalendar:
             day_cells.append((date(next_year, next_month, next_day), False))
             next_day += 1
 
-        # Create calendar grid
         for index, (cell_date, in_current) in enumerate(day_cells):
             r, c = divmod(index, 7)
             

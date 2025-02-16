@@ -736,11 +736,13 @@ class CookingRecipesView:
 
         refresh_button = ctk.CTkButton(hotbar_frame, text="Refresh", font=("Segoe UI", 30, "bold"), fg_color="#F2EBDC",
                                        hover_color="#D9CDBF", corner_radius=10,
+                                       text_color=Constants.DARK_GREY
                                        command=lambda: print("Refresh clicked!"))
         refresh_button.pack(side="left", pady=5, expand=True)
 
         back_button = ctk.CTkButton(hotbar_frame, text="Back", font=("Segoe UI", 30, "bold"), fg_color="#D9CDBF",
                                     hover_color="#C19A6B", corner_radius=10,
+                                    text_color=Constants.DARK_GREY
                                     command=self.main_menu)
         back_button.pack(side="right", pady=5, expand=True)
 

@@ -1,10 +1,14 @@
 # Handle UI components and layout here
+import math
 import time
 
 import customtkinter as ctk
+from customtkinter import CTkFrame
+
 from src.Finance.FinanceTracker import FinanceTracker
 from src.Finance.Thing import Thing
 from src.models import PieChartApp
+from src.Rent.RentFinder import RentFinder
 from datetime import datetime
 from PIL import Image
 
@@ -40,12 +44,17 @@ class TabsView:
         self.finance_button.pack(side="left", padx=50)
         self.tasks_button = ctk.CTkButton(self.frame, text="Tasks", command=self.tasks_button_click)
         self.tasks_button.pack(side="left", padx=50)
+        self.house_button = ctk.CTkButton(self.frame, text="Renting", command=self.house_button_click)
+        self.house_button.pack(side="left", padx=50)
         
     def finance_button_click(self):
         FinanceView(self.parent)
     
     def tasks_button_click(self):
         TasksView(self.parent)
+        
+    def house_button_click(self):
+        RentingView(self.parent)
 
 class FinanceView:
     def __init__(self, parent):
@@ -200,3 +209,54 @@ class TasksView:
     def clear_all_tasks(self):
         for widget in self.tasks_frame.winfo_children():
             widget.destroy()
+
+class RentingView:
+    def __init__(self,parent): 
+        self.get_images()
+        self.frame = CTkFrame(parent)
+        self.frame.pack(fill="both", expand=True)
+        self.scrolling_frame = ctk.CTkScrollableFrame(self.frame)
+        self.scrolling_frame.pack(fill="both", expand=True)
+        self.house_rows = []
+
+        self.renter = RentFinder()
+        house_list = self.renter.getHouses()
+        count = 1
+        self.current_house_row = ctk.CTkFrame(self.scrolling_frame)
+        for house in house_list:
+            if count > 3:
+                self.current_house_row.pack(padx=10, pady=10, expand=True, fill="x")
+                self.current_house_row = ctk.CTkFrame(self.scrolling_frame)
+                count = 1
+            self.create_house(house.title, house.cost, house.address, house.link)
+            count += 1
+        
+        self.refresh_button = ctk.CTkButton(self.scrolling_frame, text="Refresh")
+        self.refresh_button.pack(side="top", expand=True)
+    
+    def get_images(self):
+        try:
+            # Using .copy() keeps the image saved in memory so I don't have to keep opening the images to access them
+            with Image.open(
+                    "src/img/house.png").copy() as house_image:
+                self.scaled_house_image = ctk.CTkImage(house_image, size=(200, 200))
+        except FileNotFoundError as e:
+            print(f"Cannot access all image dependencies: {e}")
+            raise SystemExit
+    
+    def create_house(self, title, cost, address, link):
+        house_frame = ctk.CTkFrame(self.current_house_row, width=400, height=400, fg_color="black")
+        house_frame.pack_propagate(False)
+        house_cost = ctk.CTkLabel(house_frame, text=f"${cost}")
+        house_cost.pack(side="top", expand=True)
+        house_img = ctk.CTkLabel(house_frame, text="", image=self.scaled_house_image, fg_color="transparent")
+        house_img.pack(side="top", expand=True)
+        house_title = ctk.CTkLabel(house_frame, text=f"{title}")
+        house_title.pack(side="top", expand=True)
+        house_address = ctk.CTkLabel(house_frame, text=f"{address}")
+        house_address.pack(side="top", expand=True)
+        house_link = ctk.CTkLabel(house_frame, text=f"{link}")
+        house_link.pack(side="top", expand=True)
+        house_frame.pack(side="left", expand=True, padx=10)
+        
+        

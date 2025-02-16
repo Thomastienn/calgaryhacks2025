@@ -104,8 +104,9 @@ class MainMenu:
             self.frame,
             text="Enter",
             font=("Segoe UI", 20, "bold"),
-            fg_color="#D9CDBF",  #millk color
+            fg_color=Constants.MILK,  #millk color
             hover_color="#C19A6B",
+            text_color = Constants.DARK_GREY,
             width=200,
             height=50,
             corner_radius=10,
@@ -363,9 +364,9 @@ class TasksView:
 class RentingView:
     def __init__(self,parent): 
         self.get_images()
-        self.frame = CTkFrame(parent)
+        self.frame = CTkFrame(parent, fg_color=Constants.DARK_GREY)
         self.frame.pack(fill="both", expand=True)
-        self.scrolling_frame = ctk.CTkScrollableFrame(self.frame)
+        self.scrolling_frame = ctk.CTkScrollableFrame(self.frame, fg_color=Constants.DARK_GREY)
         self.scrolling_frame.pack(fill="both", expand=True)
         self.loading()
         parent.update_idletasks()
@@ -376,11 +377,11 @@ class RentingView:
         self.renter = RentFinder()
         house_list = self.renter.getHouses()
         count = 1
-        self.current_house_row = ctk.CTkFrame(self.scrolling_frame)
+        self.current_house_row = ctk.CTkFrame(self.scrolling_frame, fg_color=Constants.DARK_GREY)
         for house in house_list:
             if count > 3:
                 self.current_house_row.pack(padx=10, pady=10, expand=True, fill="x")
-                self.current_house_row = ctk.CTkFrame(self.scrolling_frame)
+                self.current_house_row = ctk.CTkFrame(self.scrolling_frame, fg_color=Constants.DARK_GREY)
                 count = 1
             self.create_house(house.title, house.cost, house.address, house.link)
             count += 1
@@ -408,19 +409,19 @@ class RentingView:
         loading_frame_text.pack(expand=True, fill="both")
         
     def create_house(self, title, cost, address, link):
-        house_frame = ctk.CTkFrame(self.current_house_row, width=400, height=400, fg_color="black")
+        house_frame = ctk.CTkFrame(self.current_house_row, width=400, height=400, fg_color=Constants.DARK_BROWN)
         house_frame.pack_propagate(False)
-        house_cost = ctk.CTkLabel(house_frame, text=f"${cost}/month")
+        house_cost = ctk.CTkLabel(house_frame, text=f"${cost}/month", font=(Constants.FONT, 20, "bold"), text_color=Constants.MILK)
         if cost is None:
-            house_cost.configure(text="Inquire for price")
+            house_cost.configure(text="Inquire for price", font=(Constants.FONT, 20, "bold"))
         house_cost.pack(side="top", expand=True)
         house_img = ctk.CTkLabel(house_frame, text="", image=self.scaled_house_image, fg_color="transparent")
         house_img.pack(side="top", expand=True)
-        house_title = ctk.CTkLabel(house_frame, text=f"{title}")
+        house_title = ctk.CTkLabel(house_frame, text=f"{title}",font=(Constants.FONT, 16, "bold"),text_color=Constants.MILK)
         house_title.pack(side="top", expand=True)
-        house_address = ctk.CTkLabel(house_frame, text=f"{address}")
+        house_address = ctk.CTkLabel(house_frame, text=f"{address}", font=(Constants.FONT, 13),text_color=Constants.MILK)
         house_address.pack(side="top", expand=True)
-        house_link = ctk.CTkLabel(house_frame, text="View more information", font=("Arial", 16, "underline"), text_color="#ADD8E6", cursor="hand2")
+        house_link = ctk.CTkLabel(house_frame, text="View more information", font=(Constants.FONT, 16, "underline"), text_color=Constants.LIGHT_GREY, cursor="hand2")
         house_link.bind("<Button-1>", lambda e: self.callback(link))
         house_link.pack(side="top", expand=True)
         house_frame.pack(side="left", expand=True, padx=10)

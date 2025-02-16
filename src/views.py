@@ -206,7 +206,9 @@ class FinanceView:
         for year in self.tracker.finance_list.getYear():
             for month in self.tracker.finance_list.getMonth(year):
                 for day in self.tracker.finance_list.getDay(year,month):
-                    date = f"{year}-{month}-{day}"
+                    month_str = str(month).zfill(2)
+                    day_str = str(day).zfill(2)
+                    date = f"{year}-{month_str}-{day_str}"
                     for stuff in self.tracker.finance_list.getItem(year,month,day):
                         if date not in self.date_frames:
                             self.date_frames[date] = ctk.CTkFrame(self.finance_scroll_frame, fg_color=Constants.MILK)
@@ -218,7 +220,7 @@ class FinanceView:
                             current_date_label.pack(side="top")
                         finance_frame = ctk.CTkFrame(self.date_frames[date], height=35, fg_color="#6D5F50")
                         finance_frame.pack(fill="x", side="top", padx=5, pady=5)
-                        category_text = ctk.CTkLabel(finance_frame, text=stuff.type,font=(Constants.FONT, 15, "bold"))
+                        category_text = ctk.CTkLabel(finance_frame, text=Thing.OPTIONS_STR[stuff.type],font=(Constants.FONT, 15, "bold"))
                         category_text.pack(side="left", padx=50)
                         name_text = ctk.CTkLabel(finance_frame, text=stuff.name,font=(Constants.FONT, 15, "bold"))
                         name_text.pack(side="left", expand=True)
@@ -238,6 +240,7 @@ class FinanceView:
         year, month, day = map(int, self.date_entry.get().split("-"))
         if True:
             if self.date_entry.get() not in self.date_frames:
+                print(self.date_entry.get(), self.date_frames)
                 self.date_frames[self.date_entry.get()] = ctk.CTkFrame(self.finance_scroll_frame, fg_color=Constants.MILK)
                 self.date_frames[self.date_entry.get()].pack(side="top", fill="x", pady=5)
                 current_date_label = ctk.CTkLabel(self.date_frames[self.date_entry.get()],

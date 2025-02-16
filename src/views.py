@@ -1,13 +1,17 @@
 # Handle UI components and layout here
 import math
+import os.path
+import pickle
 import time
 import webbrowser
 
 import customtkinter as ctk
 from customtkinter import CTkFrame
+from unicodedata import category
 
 from src.Finance.FinanceTracker import FinanceTracker
 from src.Finance.Thing import Thing
+from src.FrontPage.QuoteReceiver import QuoteReceiver
 from src.models import PieChartApp
 from src.Rent.RentFinder import RentFinder
 from datetime import datetime, date, timedelta
@@ -18,11 +22,13 @@ import src.utils as utils
 class MainView(ctk.CTk):
     def __init__(self):
         super().__init__()
-        self.title("Hackathon")
+        self.title_text = "Hackathon"
+        self.title(self.title_text)
         self.geometry("1200x600")
         
         # Instantiate all views in here
-        TabsView(self)
+        MainMenu(self, self.title_text)
+        #TabsView(self)
         
         self.mainloop()
     
@@ -31,6 +37,83 @@ class StartView:
         self.frame = ctk.CTkFrame(parent)
         self.frame.pack(fill="both", expand=True)
         
+class MainMenu:
+    def __init__(self, root, title, quote_position=0.3):
+        self.root = root
+        self.frame = ctk.CTkFrame(root)
+        self.frame.pack(fill="both", expand=True)
+
+        # Store parameters
+        self.title_text = title
+        self.quote_generator = QuoteReceiver()
+        new_quote = self.quote_generator.getQuote()
+        self.quote = new_quote.desc
+        self.author = new_quote.author
+        self.quote_position = quote_position  # Controls distance from top
+
+        # Create the title at the top
+        self.create_main_title()
+
+        # Create the quote section
+        self.create_quote_section()
+
+        # Create the enter button
+        self.create_enter_button()
+
+    def create_main_title(self):
+        """Creates the title at the top center."""
+        title_label = ctk.CTkLabel(
+            self.frame,
+            text=self.title_text,
+            font=("Arial", 40, "bold"),
+            text_color="white"
+        )
+        title_label.place(relx=0.5, rely=0.05, anchor="center")  # Centered at the top
+
+    def create_quote_section(self):
+        """Creates the centered quote section with author."""
+        quote_frame = ctk.CTkFrame(self.frame, fg_color="transparent")
+        quote_frame.place(relx=0.5, rely=self.quote_position+0.08, anchor="center")  # ✅ Position is now adjustable
+
+        # Quote text (Make it stand out)
+        quote_label = ctk.CTkLabel(
+            quote_frame,
+            text=f'“{self.quote}”',
+            font=("Arial", 30, "bold"),  # Large and bold for emphasis
+            text_color="white",
+            wraplength=750,
+            justify="center"
+        )
+        quote_label.pack(pady=10)
+
+        # Author text (Smaller, below the quote)
+        author_label = ctk.CTkLabel(
+            quote_frame,
+            text=f"- {self.author}",
+            font=("Arial", 18, "italic"),
+            text_color="lightgray"
+        )
+        author_label.pack()
+
+    def create_enter_button(self):
+        """Creates the enter button centered at the bottom."""
+        enter_button = ctk.CTkButton(
+            self.frame,
+            text="Enter",
+            font=("Arial", 20, "bold"),
+            fg_color="#4CAF50",  # Green color
+            hover_color="#66BB6A",
+            width=200,
+            height=50,
+            corner_radius=10,
+            command=self.enter_pressed  # Placeholder function
+        )
+        enter_button.pack(side="bottom", pady=40)
+
+    def enter_pressed(self):
+        TabsView(self.root)
+        FinanceView(self.root)
+        self.frame.destroy()
 
 class TabsView:
     def __init__(self, parent):
@@ -42,17 +125,20 @@ class TabsView:
         
     def create_buttons(self):
         self.finance_button = ctk.CTkButton(self.frame, text="Finance", command=self.finance_button_click)
-        self.finance_button.pack(side="left", padx=50)
+        self.finance_button.pack(side="left", expand=True)
         self.tasks_button = ctk.CTkButton(self.frame, text="Tasks", command=self.tasks_button_click)
-        self.tasks_button.pack(side="left", padx=50)
+        self.tasks_button.pack(side="left", expand=True)
         self.house_button = ctk.CTkButton(self.frame, text="Renting", command=self.house_button_click)
-        self.house_button.pack(side="left", padx=50)
+        self.house_button.pack(side="left", expand=True)
+        self.jobs_button = ctk.CTkButton(self.frame, text="Jobs", command=self.jobs_button_click)
+        self.jobs_button.pack(side="left", expand=True)
         
     def switch_view(self, new_view):
         for widget in self.parent.winfo_children():
             if widget != self.frame:
                 widget.destroy()
-            view = new_view(self.parent)
+        
+        new_view(self.parent)
             
         
     def finance_button_click(self):
@@ -63,6 +149,9 @@ class TabsView:
         
     def house_button_click(self):
         self.switch_view(RentingView)
+    
+    def jobs_button_click(self):
+        pass
 
 class FinanceView:
     def __init__(self, parent):
@@ -105,6 +194,29 @@ class FinanceView:
         self.spent_month = ctk.CTkLabel(self.pie_chart_frame, text="$0")
         
         self.date_frames = {}
+        for year in self.tracker.finance_list.getYear():
+            for month in self.tracker.finance_list.getMonth(year):
+                for day in self.tracker.finance_list.getDay(year,month):
+                    date = f"{year}-{month}-{day}"
+                    for stuff in self.tracker.finance_list.getItem(year,month,day):
+                        if date not in self.date_frames:
+                            self.date_frames[date] = ctk.CTkFrame(self.finance_scroll_frame)
+                            self.date_frames[date].pack(side="top", fill="x", pady=5)
+                            current_date_label = ctk.CTkLabel(self.date_frames[date],
+                                                              text=f"{year}-{month}-{day}")
+                            current_date_label.pack(side="top")
+                        finance_frame = ctk.CTkFrame(self.date_frames[date], height=35)
+                        finance_frame.pack(fill="x", side="top", padx=5, pady=5)
+                        category_text = ctk.CTkLabel(finance_frame, text=stuff.type)
+                        category_text.pack(side="left", padx=50)
+                        name_text = ctk.CTkLabel(finance_frame, text=stuff.name)
+                        name_text.pack(side="left", expand=True)
+                        amount_text = ctk.CTkLabel(finance_frame, text="$" + str(stuff.amount))
+                        amount_text.pack(side="left", expand=True)
+        try:
+            self.pie_chart.update_chart(self.tracker)
+        except:
+            pass
 
     def add_button_press(self):
         category = self.categories_dropdown.get()
@@ -126,8 +238,8 @@ class FinanceView:
             category_text.pack(side="left", padx=50)
             name_text = ctk.CTkLabel(finance_frame, text=name)
             name_text.pack(side="left", expand=True)
-            name_text = ctk.CTkLabel(finance_frame, text="$" + cost)
-            name_text.pack(side="left", expand=True)
+            amount_text = ctk.CTkLabel(finance_frame, text="$" + cost)
+            amount_text.pack(side="left", expand=True)
             
             self.tracker.put(name, float(cost), category, self.date_entry.get())
             self.pie_chart.update_chart(self.tracker)

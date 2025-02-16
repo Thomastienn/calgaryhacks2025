@@ -275,22 +275,23 @@ class TasksView:
     def __init__(self, root):
         self.get_images()
         self.buttons = []
-        self.frame = ctk.CTkFrame(root)
+        self.frame = ctk.CTkFrame(root, fg_color=Constants.DARK_GREY)
         self.frame.pack(expand=True, fill="both")
         self.todo_frame = ctk.CTkFrame(self.frame, fg_color="transparent")
         self.todo_frame.pack(side="left", expand=True, fill="both", padx=10)
         self.frame_dict = {}
         self.calendar_frame = ModernCalendar(self, self.frame)
 
-        self.header_frame = ctk.CTkFrame(self.todo_frame)
+        self.header_frame = ctk.CTkFrame(self.todo_frame,fg_color=Constants.DARK_GREY)
         self.header_frame.pack(side="top", fill="x", pady=10)
         self.task_entry = ctk.CTkEntry(
-            self.header_frame, width=300, placeholder_text="Select a day", font=("Segoe UI", 14),
+            self.header_frame, height=40, width=300, placeholder_text="Select a day", font=(Constants.FONT, 16, "bold"),
         )
         self.task_entry.pack(side="left",padx=10)
 
         self.add_button = ctk.CTkButton(
-            self.header_frame, text="Add Task", width=200, height=40, font=("Segoe UI", 14), state="disabled",
+            self.header_frame, text="Add Task", width=200, height=40, font=(Constants.FONT, 16, "bold"), state="disabled", fg_color=Constants.MILK,
+            text_color=Constants.DARK_BROWN,
             command=self.add_task
         )
         self.add_button.pack(side="left",padx=10)
@@ -299,11 +300,13 @@ class TasksView:
         self.tasks_frame = ctk.CTkFrame(self.todo_frame, height=200, fg_color="#3C3D40")
         self.tasks_frame.pack(pady=10, fill="both", expand=True)
         
-        self.frame_date = ctk.CTkLabel(self.tasks_frame, text="A")
+        self.frame_date = ctk.CTkLabel(self.tasks_frame, text="Pick a day",font=(Constants.FONT, 18, "bold"))
         self.frame_date.pack()
 
         self.clear_button = ctk.CTkButton(
-            self.header_frame, text="Clear All", width=200, height=40, font=("Segoe UI", 14),
+            self.header_frame, text="Clear All", width=200, height=40, font=(Constants.FONT, 16, "bold"),
+            fg_color=Constants.MILK,
+            text_color=Constants.DARK_BROWN,
             command=self.clear_all_tasks
         )
         self.clear_button.pack(side="left", padx=10)
@@ -326,7 +329,7 @@ class TasksView:
             self.tasks_frame = self.frame_dict[selected_date]
         else:
             self.tasks_frame = ctk.CTkFrame(self.todo_frame, height=200, fg_color="#3C3D40")
-            self.frame_date = ctk.CTkLabel(self.tasks_frame, text=f"Tasks for {selected_date}")
+            self.frame_date = ctk.CTkLabel(self.tasks_frame, text=f"Tasks for {selected_date}", font=(Constants.FONT, 18, "bold"), text_color=Constants.MILK)
             self.frame_date.pack(side="top")
 
         self.tasks_frame.pack(side="bottom", pady=10, fill="both", expand=True)
@@ -342,7 +345,8 @@ class TasksView:
 
             # Task checkbox on the left with a callback to toggle text color
             task_checkbox = ctk.CTkCheckBox(
-                task_frame, text=task, font=("Segoe UI", 14),
+                task_frame, text=task, font=(Constants.FONT, 15),
+                text_color=Constants.MILK,
                 command=lambda: self.toggle_task(task_checkbox)
             )
             task_checkbox.pack(side="left", padx=(10, 0))
@@ -878,9 +882,9 @@ class ModernCalendar:
             r, c = divmod(index, 7)
             
             btn_fg = "#2c3e50" if in_current  else "#bdc3c7"
-            btn_bg = "#8C877D" if self.selected_date == cell_date else "#ffffff"
+            btn_bg = "#CBAC8A" if self.selected_date == cell_date else "#ffffff"
             if cell_date in self.buttons_with_tasks:
-                btn_bg="#5C6D70"
+                btn_bg="#FDFCF9"
             btn = ctk.CTkButton(
                 self.buttons_frame, text=str(cell_date.day),
                 font=("Segoe UI", 12, "bold"),

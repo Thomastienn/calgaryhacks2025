@@ -12,6 +12,7 @@ from unicodedata import category
 from src.Finance.FinanceTracker import FinanceTracker
 from src.Finance.Thing import Thing
 from src.FrontPage.QuoteReceiver import QuoteReceiver
+from src.Job.JobFinder import JobFinder
 from src.models import PieChartApp
 from src.Rent.RentFinder import RentFinder
 from datetime import datetime, date, timedelta
@@ -415,27 +416,38 @@ class RentingView:
         
 class JobsView:
     def __init__(self, root):
-        self.frame = ctk.CTkScrollableFrame(root)
+        self.frame = ctk.CTkFrame(root)
+        
+        self.scroll_frame = ctk.CTkScrollableFrame(self.frame)
         self.frame.pack(expand=True, fill="both")
-        self.header = ctk.CTkLabel(self.frame, text="Job Postings Near You", font=("Arial", 40, "bold"))
+        self.scroll_frame.pack(expand=True, fill="both")
+        self.header = ctk.CTkLabel(self.scroll_frame, text="Job Postings Near You", font=("Arial", 40, "bold"))
+
+        root.update_idletasks()
         self.header.pack(side="top", expand=True, pady=10)
+        self.loading()
+        root.update_idletasks()
 
-        self.job_list_frame = ctk.CTkFrame(self.frame)
+        self.job_list_frame = ctk.CTkFrame(self.scroll_frame)
         self.job_list_frame.pack(fill="x", padx=20)
+        
+        self.job_finder = JobFinder()
+        
+        self.display_jobs(self.job_finder.jobs)
+        
+        self.loading_frame.destroy()
 
-        self.sample_job_data = [
-            {"title": "Software Engineer", "company": "ABC Corp", "location": "Jaipur", "date_posted": "2025-02-10",
-             "salary": "90,000", "description": "Develop and maintain software applications."},
-            {"title": "Data Scientist", "company": "XYZ Ltd", "location": "Delhi", "date_posted": "2025-02-12",
-             "salary": "110,000", "description": "Analyze and interpret complex data sets."},
-            {"title": "Web Developer", "company": "WebWorks", "location": "Bangalore", "date_posted": "2025-02-13",
-             "salary": "80,000", "description": "Build and maintain websites for clients."}
-        ]
-
-        self.display_jobs(self.sample_job_data)
-
+    def loading(self):
+        self.loading_frame = ctk.CTkFrame(self.frame, width=self.frame.winfo_width() // 2,
+                                          height=self.frame.winfo_height() // 2)
+        self.loading_frame.pack_propagate(False)
+        print(self.frame.winfo_width() // 2, self.frame.winfo_height() // 2)
+        self.loading_frame.place(relx=0, rely=0)
+        loading_frame_text = ctk.CTkLabel(self.loading_frame, text="Retrieving Job Info...",
+                                          font=("Arial", 100, "bold"))
+        loading_frame_text.pack(expand=True, fill="both")
+        
     def display_jobs(self, job_data):
-
         if not job_data:
             no_job_label = ctk.CTkLabel(self.job_list_frame, text="No jobs found.", font=("Arial", 14))
             no_job_label.pack(pady=20)
@@ -444,14 +456,16 @@ class JobsView:
         for job in job_data:
             job_frame = ctk.CTkFrame(self.job_list_frame, border_width=2, corner_radius=8)
             job_frame.pack(fill="x", pady=10, padx=10)
-            job_title = job.get('title', 'No title')
-            company = job.get('company', 'No company')
-            location = job.get('location', 'No location')
-            date_posted = job.get('date_posted', 'No date')
-            salary = job.get('salary', 'Not specified')
-            job_description = job.get('description', 'No description available.')
+            job_title = job.title
+            company = job.company
+            location = 'No location'
+            date_posted = job.date
+            salary = 'Not specified'
+            link = job.link
+            job_description = job.desc
             title_label = ctk.CTkLabel(job_frame, text=f"{job_title}", font=("Arial", 20, "bold"))
             title_label.pack(anchor="w", padx=5, pady=5)
+            print(job_title)
             company_label = ctk.CTkLabel(job_frame, text=f"{company}", font=("Arial", 14,))
             company_label.pack(anchor="w", padx=5, pady=5)
             location_label = ctk.CTkLabel(job_frame, text=f"{location}", font=("Arial", 14,))
@@ -464,7 +478,7 @@ class JobsView:
             job_description_label = ctk.CTkLabel(job_frame, text=f"Job Description: {job_description}",
                                                  font=("Arial", 14,))
             job_description_label.pack(anchor="w", padx=5, pady=5)
-        refresh_button = ctk.CTkButton(self.frame, text="Refresh")
+        refresh_button = ctk.CTkButton(self.scroll_frame, text="Refresh")
         refresh_button.pack(side="right", padx=30,pady=5)
 
 

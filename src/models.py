@@ -3,6 +3,7 @@
 
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from src.Constants import Constants
 
 class PieChartApp:
     def __init__(self, root):
@@ -13,7 +14,7 @@ class PieChartApp:
         self.sizes = []
 
         self.dark_theme_colors = [
-            '#3B5D50', '#7D8F69', '#D4C8BE', '#A68A64', '#5C6D70', '#B22222', '#C2A878'
+            '#A19D84', Constants.DARK_GREY, '#C4A484', '#A8A29E', '#E5D7C1', '#4A4239', '#6D5F50'
         ]
 
         if len(self.labels) > len(self.dark_theme_colors):

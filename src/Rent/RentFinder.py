@@ -1,8 +1,8 @@
 from bs4 import BeautifulSoup
 import requests
-from House import House
+from src.Rent.House import House
 from datetime import datetime
-from Finance.FinanceTracker import FinanceTracker
+from src.Finance.FinanceTracker import FinanceTracker
 import pickle
 import os
 class RentFinder:

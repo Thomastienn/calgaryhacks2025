@@ -761,7 +761,7 @@ class CookingRecipesView:
 
         back_button = ctk.CTkButton(hotbar_frame, text="Back", font=("Segoe UI", 30, "bold"), fg_color="#D9CDBF",
                                     hover_color="#C19A6B", corner_radius=10,
-                                    text_color=Constants.DARK_GREY
+                                    text_color=Constants.DARK_GREY,
                                     command=self.main_menu)
         back_button.pack(side="right", pady=5, expand=True)
 

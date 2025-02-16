@@ -16,10 +16,9 @@ class RentFinder:
         self.refresh()
     
     def findIncome(self):
-        path = f"calgaryhacks2025/src/Databases/{FinanceTracker.DATABASE_DIR}"
         year,month,_ = map(int, str(datetime.now().date()).split("-"))
-        if os.path.exists(path):
-            with open(path, "rb") as inp:
+        if os.path.exists(FinanceTracker.DATABASE_DIR):
+            with open(FinanceTracker.DATABASE_DIR, "rb") as inp:
                 database = pickle.load(inp)
                 total_income = 0
                 for stuff in database.getItemAllDay(year,month):

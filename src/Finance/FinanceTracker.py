@@ -4,10 +4,10 @@ from src.Finance.FinanceDict import FinanceDict
 import os
 import pickle
 class FinanceTracker:
-    DATABASE_DIR = "finance_track.pkl"
+    DATABASE_DIR = "calgaryhacks2025/src/Databases/finance_track.pkl"
     def __init__(self):
         self.finance_list = FinanceDict()
-        if os.path.exists(f"calgaryhacks2025/src/Databases/{self.DATABASE_DIR}"):
+        if os.path.exists(self.DATABASE_DIR):
             with open(self.DATABASE_DIR, "rb") as inp:
                 self.finance_list = pickle.load(inp)
     def put(self, thing: str, money: float, category: str, date:str=None) -> None:

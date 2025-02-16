@@ -514,14 +514,13 @@ class JobsView:
         refresh_button.pack(side="right", padx=30, pady=5)
 
 
-
 class RecipeViewer:
-    def __init__(self, cooking_class, root, title, country, ingredients, recipes,difficulty, foods):
+    def __init__(self, cooking_class, root, title, country, ingredients, recipes, difficulty, foods):
         self.frame = ctk.CTkFrame(root)
         self.frame.pack(expand=True, fill="both")
-        self.cooking_class = cooking_class
+        self.cooking_class = cooking_class  # Large default window
         self.frame.configure(fg_color="#2B2B2B")  # Dark background
-        self.difficulty = difficulty 
+        self.difficulty = difficulty
         # Store parameters
         self.country = country  # Country of origin
         self.ingredients = ingredients  # List of ingredients
@@ -531,28 +530,24 @@ class RecipeViewer:
         # Create the title label at the top
         self.create_title()
 
-        # Create the country box (top-right)
         self.create_country_box()
 
-        # Create the main content section (Ingredients & Recipes)
         self.create_content_frame()
-
-        # Create bottom back button
-        self.create_back_button()
 
     def create_title(self):
         """Creates the centered title at the top."""
         self.title_label = ctk.CTkLabel(
             self.frame,
             text="Recipe Viewer",
-            font=("Segoe UI", 50, "bold"),  # Large title font
+            font=("Arial", 50, "bold"),  # Large title font
             text_color="white"
         )
         self.title_label.pack(pady=20)  # Space below the title
 
     def create_country_box(self):
         """Creates a country display box in the top-right corner."""
-        country_frame = ctk.CTkFrame(self.frame, fg_color="#3C3D40", corner_radius=10, width=220, height=60)  # ✅ Wider box
+        country_frame = ctk.CTkFrame(self.frame, fg_color="#3C3D40", corner_radius=10, width=220,
+                                     height=60)  # ✅ Wider box
         country_frame.place(relx=0.85, rely=0.05, anchor="ne")  # ✅ Position stays the same
 
         # Create a frame inside for horizontal layout
@@ -563,7 +558,7 @@ class RecipeViewer:
         country_label = ctk.CTkLabel(
             inner_frame,
             text="Country:",
-            font=("Segoe UI", 16, "bold"),
+            font=("Arial", 16, "bold"),
             text_color="white"
         )
         country_label.pack(side="left", padx=5)  # ✅ Align to the left
@@ -572,15 +567,16 @@ class RecipeViewer:
         country_name_label = ctk.CTkLabel(
             inner_frame,
             text=self.country,
-            font=("Segoe UI", 18, "bold"),
+            font=("Arial", 18, "bold"),
             text_color="yellow"
         )
         country_name_label.pack(side="left", padx=5)  # ✅ Aligned next to "Country:"
 
     def create_content_frame(self):
         """Creates the main frame that contains Ingredients and Recipes."""
+        # Main content frame
         content_frame = ctk.CTkFrame(self.frame, fg_color="transparent")
-        content_frame.pack(expand=True, fill="both", padx=20, pady=10)
+        content_frame.pack(expand=True, fill="both", padx=20, pady=(20, 80))  # Added bottom padding for back button
 
         # Left Side: Ingredients
         self.create_ingredients_section(content_frame)
@@ -592,68 +588,91 @@ class RecipeViewer:
         # Right Side: Recipes
         self.create_recipes_section(content_frame)
 
+        # Back Button Frame
+        button_frame = ctk.CTkFrame(self.frame, fg_color="#3A3D40", height=60)
+        button_frame.pack(side="bottom", fill="x")
+        button_frame.pack_propagate(False)  # Prevent frame from shrinking
+
+        back_button = ctk.CTkButton(
+            button_frame,
+            text="Back",
+            font=("Arial", 30, "bold"),
+            fg_color="#D32F2F",
+            hover_color="#E53935",
+            corner_radius=10,
+            command=lambda: self.cooking_class.create_recipe_page(self.difficulty, self.foods)
+        )
+        back_button.pack(side="right", padx=20, pady=10)
+
     def create_ingredients_section(self, parent):
-        """Creates the Ingredients box on the left side."""
-        ingredients_frame = ctk.CTkFrame(parent, fg_color="#3C3D40", corner_radius=10)
-        ingredients_frame.pack(side="left", expand=True, fill="both", padx=10, pady=10)
+        """Creates the Ingredients box with scrollbar on the left side."""
+        # Container frame for ingredients
+        ingredients_container = ctk.CTkFrame(parent, fg_color="transparent")
+        ingredients_container.pack(side="left", expand=True, fill="both", padx=10, pady=10)
 
         # Title for Ingredients
         ingredients_title = ctk.CTkLabel(
-            ingredients_frame,
+            ingredients_container,
             text="Ingredients",
-            font=("Segoe UI", 30, "bold"),
+            font=("Arial", 30, "bold"),
             text_color="white"
         )
-        ingredients_title.pack(pady=10)
+        ingredients_title.pack(pady=10, fill="x")
 
-        # Display each ingredient inside the box
+        # Create scrollable frame for ingredients
+        ingredients_scroll = ctk.CTkScrollableFrame(
+            ingredients_container,
+            fg_color="#3C3D40",
+            corner_radius=10,
+            orientation="vertical"
+        )
+        ingredients_scroll.pack(expand=True, fill="both")
+
+        # Display each ingredient inside the scrollable frame
         for ingredient in self.ingredients:
             label = ctk.CTkLabel(
-                ingredients_frame,
+                ingredients_scroll,
                 text=f"- {ingredient}",
-                font=("Segoe UI", 18),
-                text_color="white"
+                font=("Arial", 18),
+                text_color="white",
+                wraplength=400  # Increased wraplength for full width
             )
-            label.pack(anchor="w", padx=20, pady=2)
+            label.pack(anchor="w", padx=20, pady=2, fill="x")
 
     def create_recipes_section(self, parent):
-        """Creates the Recipes box on the right side."""
-        recipes_frame = ctk.CTkFrame(parent, fg_color="#3C3D40", corner_radius=10)
-        recipes_frame.pack(side="right", expand=True, fill="both", padx=10, pady=10)
+        """Creates the Recipes box with scrollbar on the right side."""
+        # Container frame for recipes
+        recipes_container = ctk.CTkFrame(parent, fg_color="transparent")
+        recipes_container.pack(side="right", expand=True, fill="both", padx=10, pady=10)
 
         # Title for Recipes
         recipes_title = ctk.CTkLabel(
-            recipes_frame,
+            recipes_container,
             text="Instructions",
-            font=("Segoe UI", 30, "bold"),
+            font=("Arial", 30, "bold"),
             text_color="white"
         )
-        recipes_title.pack(pady=10)
+        recipes_title.pack(pady=10, fill="x")
 
-        # Display each recipe inside the box
+        # Create scrollable frame for recipes
+        recipes_scroll = ctk.CTkScrollableFrame(
+            recipes_container,
+            fg_color="#3C3D40",
+            corner_radius=10,
+            orientation="vertical"
+        )
+        recipes_scroll.pack(expand=True, fill="both")
+
+        # Display each recipe step inside the scrollable frame
         for recipe in self.recipes.split("\n"):
             label = ctk.CTkLabel(
-                recipes_frame,
+                recipes_scroll,
                 text=f"- {recipe}",
-                font=("Segoe UI", 18),
-                text_color="white"
+                font=("Arial", 18),
+                text_color="white",
+                wraplength=400  # Increased wraplength for full width
             )
-            label.pack(anchor="w", padx=20, pady=2)
-
-    def create_back_button(self):
-        """Creates the back button centered at the bottom."""
-        back_button = ctk.CTkButton(
-            self.frame,
-            text="Back",
-            font=("Segoe UI", 20, "bold"),
-            fg_color="#D32F2F",  # Red color
-            hover_color="#E53935",
-            width=150,
-            height=50,
-            corner_radius=10,
-            command=lambda: self.cooking_class.create_recipe_page(self.difficulty,self.foods)  # Placeholder function
-        )
-        back_button.pack(side="bottom", pady=20)
+            label.pack(anchor="w", padx=20, pady=2, fill="x")
 
 class CookingRecipesView:
     def __init__(self, root):

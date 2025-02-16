@@ -18,6 +18,7 @@ from src.models import PieChartApp
 from src.Rent.RentFinder import RentFinder
 from datetime import datetime, date, timedelta
 from PIL import Image
+from src.Constants import Constants
 
 import src.utils as utils
 
@@ -42,7 +43,7 @@ class StartView:
 class MainMenu:
     def __init__(self, root, title, quote_position=0.3):
         self.root = root
-        self.frame = ctk.CTkFrame(root)
+        self.frame = ctk.CTkFrame(root, fg_color=Constants.DARK_GREY)
         self.frame.pack(fill="both", expand=True)
 
         # Store parameters
@@ -67,7 +68,7 @@ class MainMenu:
         title_label = ctk.CTkLabel(
             self.frame,
             text=self.title_text,
-            font=("Arial", 40, "bold"),
+            font=(Constants.FONT, 40, "bold"),
             text_color="white"
         )
         title_label.place(relx=0.5, rely=0.05, anchor="center")  # Centered at the top
@@ -81,18 +82,18 @@ class MainMenu:
         quote_label = ctk.CTkLabel(
             quote_frame,
             text=f'“{self.quote}”',
-            font=("Arial", 30, "bold"),  # Large and bold for emphasis
+            font=(Constants.FONT, 30, "bold"),  # Large and bold for emphasis
             text_color="white",
             wraplength=750,
             justify="center"
         )
-        quote_label.pack(pady=10)
+        quote_label.pack(pady=20)
 
         # Author text (Smaller, below the quote)
         author_label = ctk.CTkLabel(
             quote_frame,
             text=f"- {self.author}",
-            font=("Arial", 18, "italic"),
+            font=("Segoe UI", 18, "italic"),
             text_color="lightgray"
         )
         author_label.pack()
@@ -102,9 +103,9 @@ class MainMenu:
         enter_button = ctk.CTkButton(
             self.frame,
             text="Enter",
-            font=("Arial", 20, "bold"),
-            fg_color="#4CAF50",  # Green color
-            hover_color="#66BB6A",
+            font=("Segoe UI", 20, "bold"),
+            fg_color="#D9CDBF",  #millk color
+            hover_color="#C19A6B",
             width=200,
             height=50,
             corner_radius=10,
@@ -120,7 +121,7 @@ class MainMenu:
 class TabsView:
     def __init__(self, parent):
         self.parent = parent
-        self.frame = ctk.CTkFrame(self.parent, fg_color="black", height=100)
+        self.frame = ctk.CTkFrame(self.parent, fg_color="#40382E", height=100)
         self.frame.pack_propagate(False)
         self.frame.pack(side="bottom", fill="x")
         self.create_buttons()
@@ -194,7 +195,7 @@ class FinanceView:
         
         self.pie_chart_frame = ctk.CTkFrame(self.frame, fg_color="#3C3D40")
         self.pie_chart_frame.pack(side="left", expand=True)
-        self.pie_chart_title = ctk.CTkLabel(self.pie_chart_frame, text="Overview of the Month", font=("Arial", 30, "bold"))
+        self.pie_chart_title = ctk.CTkLabel(self.pie_chart_frame, text="Overview of the Month", font=("Segoe UI", 30, "bold"))
         self.pie_chart_title.pack(side="top")
         self.pie_chart = PieChartApp(self.pie_chart_frame)
         self.income_month = ctk.CTkLabel(self.pie_chart_frame, text="$0")
@@ -265,12 +266,12 @@ class TasksView:
         
 
         self.task_entry = ctk.CTkEntry(
-            self.todo_frame, width=300, placeholder_text="Enter the task", font=("Arial", 14)
+            self.todo_frame, width=300, placeholder_text="Enter the task", font=("Segoe UI", 14)
         )
         self.task_entry.pack(pady=20)
 
         self.add_button = ctk.CTkButton(
-            self.todo_frame, text="Add Task", width=200, height=40, font=("Arial", 14),
+            self.todo_frame, text="Add Task", width=200, height=40, font=("Segoe UI", 14),
             command=self.add_task
         )
         self.add_button.pack(pady=10)
@@ -280,7 +281,7 @@ class TasksView:
         self.tasks_frame.pack(pady=10, fill="both", expand=True)
 
         self.clear_button = ctk.CTkButton(
-            self.todo_frame, text="Clear All", width=200, height=40, font=("Arial", 14),
+            self.todo_frame, text="Clear All", width=200, height=40, font=("Segoe UI", 14),
             command=self.clear_all_tasks
         )
         self.clear_button.pack(pady=5)
@@ -292,8 +293,8 @@ class TasksView:
             with Image.open(
                     "src/img/trash.png").copy() as trash_image, Image.open(
                 "src/img/trashRed.png").copy() as trash_red_image:
-                self.scaled_trash_image = ctk.CTkImage(trash_image, size=(70, 70))
-                self.scaled_trash_red_image = ctk.CTkImage(trash_red_image, size=(70, 70))
+                self.scaled_trash_image = ctk.CTkImage(trash_image, size=(50, 50))
+                self.scaled_trash_red_image = ctk.CTkImage(trash_red_image, size=(50, 50))
         except FileNotFoundError as e:
             print(f"Cannot access all image dependencies: {e}")
             raise SystemExit
@@ -318,7 +319,7 @@ class TasksView:
 
             # Task checkbox on the left with a callback to toggle text color
             task_checkbox = ctk.CTkCheckBox(
-                task_frame, text=task, font=("Arial", 14),
+                task_frame, text=task, font=("Segoe UI", 14),
                 command=lambda: self.toggle_task(task_checkbox)
             )
             task_checkbox.pack(side="left", padx=(10, 0))
@@ -364,7 +365,7 @@ class RentingView:
         self.scrolling_frame.pack(fill="both", expand=True)
         self.loading()
         parent.update_idletasks()
-        self.rent_title = ctk.CTkLabel(self.scrolling_frame, text="Houses for rent near you", font=("Arial", 30, "bold"))
+        self.rent_title = ctk.CTkLabel(self.scrolling_frame, text="Houses for rent near you", font=("Segoe UI", 30, "bold"))
         self.rent_title.pack(side="top", expand=True, fill="x")
         self.house_rows = []
 
@@ -415,7 +416,7 @@ class RentingView:
         house_title.pack(side="top", expand=True)
         house_address = ctk.CTkLabel(house_frame, text=f"{address}")
         house_address.pack(side="top", expand=True)
-        house_link = ctk.CTkLabel(house_frame, text="View more information", text_color="blue", underline=0, cursor="hand2")
+        house_link = ctk.CTkLabel(house_frame, text="View more information", font=("Arial", 16, "underline"), text_color="#ADD8E6", cursor="hand2")
         house_link.bind("<Button-1>", lambda e: self.callback(link))
         house_link.pack(side="top", expand=True)
         house_frame.pack(side="left", expand=True, padx=10)
@@ -423,7 +424,7 @@ class RentingView:
 class JobsView:
     def __init__(self, root):
         self.frame = ctk.CTkFrame(root)
-        
+
         self.scroll_frame = ctk.CTkScrollableFrame(self.frame)
         self.frame.pack(expand=True, fill="both")
         self.scroll_frame.pack(expand=True, fill="both")
@@ -436,23 +437,25 @@ class JobsView:
 
         self.job_list_frame = ctk.CTkFrame(self.scroll_frame)
         self.job_list_frame.pack(fill="x", padx=20)
-        
+
         self.job_finder = JobFinder()
-        
+
         self.display_jobs(self.job_finder.jobs)
-        
+
         self.loading_frame.destroy()
 
     def loading(self):
         self.loading_frame = ctk.CTkFrame(self.frame, width=self.frame.winfo_width() // 2,
                                           height=self.frame.winfo_height() // 2)
         self.loading_frame.pack_propagate(False)
-        print(self.frame.winfo_width() // 2, self.frame.winfo_height() // 2)
         self.loading_frame.place(relx=0, rely=0)
         loading_frame_text = ctk.CTkLabel(self.loading_frame, text="Retrieving Job Info...",
                                           font=("Arial", 100, "bold"))
         loading_frame_text.pack(expand=True, fill="both")
-        
+
+    def open_link(self, url):
+        webbrowser.open(url)
+
     def display_jobs(self, job_data):
         if not job_data:
             no_job_label = ctk.CTkLabel(self.job_list_frame, text="No jobs found.", font=("Arial", 14))
@@ -469,6 +472,7 @@ class JobsView:
             salary = 'Not specified'
             link = job.link
             job_description = job.desc
+
             title_label = ctk.CTkLabel(job_frame, text=f"{job_title}", font=("Arial", 20, "bold"))
             title_label.pack(anchor="w", padx=5, pady=5)
             company_label = ctk.CTkLabel(job_frame, text=f"{company}", font=("Arial", 14,))
@@ -480,11 +484,16 @@ class JobsView:
             salary_label = ctk.CTkLabel(job_frame, text=f"Salary: {salary}", font=("Arial", 14,))
             salary_label.pack(anchor="w", padx=5, pady=5)
 
-            job_description_label = ctk.CTkLabel(job_frame, text=f"Job Description: {job_description}",
-                                                 font=("Arial", 14,), wraplength=800)
-            job_description_label.pack(anchor="w", padx=5, pady=5)
+
+
+            if link:
+                link_label = ctk.CTkLabel(job_frame, text="Click here to view job", font=("Arial", 16, "underline"),
+                                          text_color="#ADD8E6", cursor="hand2")
+                link_label.pack(anchor="w", padx=5, pady=5)
+                link_label.bind("<Button-1>", lambda e, url=link: self.open_link(url))
+
         refresh_button = ctk.CTkButton(self.scroll_frame, text="Refresh")
-        refresh_button.pack(side="right", padx=30,pady=5)
+        refresh_button.pack(side="right", padx=30, pady=5)
 
 
 
@@ -518,7 +527,7 @@ class RecipeViewer:
         self.title_label = ctk.CTkLabel(
             self.frame,
             text="Recipe Viewer",
-            font=("Arial", 50, "bold"),  # Large title font
+            font=("Segoe UI", 50, "bold"),  # Large title font
             text_color="white"
         )
         self.title_label.pack(pady=20)  # Space below the title
@@ -536,7 +545,7 @@ class RecipeViewer:
         country_label = ctk.CTkLabel(
             inner_frame,
             text="Country:",
-            font=("Arial", 16, "bold"),
+            font=("Segoe UI", 16, "bold"),
             text_color="white"
         )
         country_label.pack(side="left", padx=5)  # ✅ Align to the left
@@ -545,7 +554,7 @@ class RecipeViewer:
         country_name_label = ctk.CTkLabel(
             inner_frame,
             text=self.country,
-            font=("Arial", 18, "bold"),
+            font=("Segoe UI", 18, "bold"),
             text_color="yellow"
         )
         country_name_label.pack(side="left", padx=5)  # ✅ Aligned next to "Country:"
@@ -574,7 +583,7 @@ class RecipeViewer:
         ingredients_title = ctk.CTkLabel(
             ingredients_frame,
             text="Ingredients",
-            font=("Arial", 30, "bold"),
+            font=("Segoe UI", 30, "bold"),
             text_color="white"
         )
         ingredients_title.pack(pady=10)
@@ -584,7 +593,7 @@ class RecipeViewer:
             label = ctk.CTkLabel(
                 ingredients_frame,
                 text=f"- {ingredient}",
-                font=("Arial", 18),
+                font=("Segoe UI", 18),
                 text_color="white"
             )
             label.pack(anchor="w", padx=20, pady=2)
@@ -598,7 +607,7 @@ class RecipeViewer:
         recipes_title = ctk.CTkLabel(
             recipes_frame,
             text="Instructions",
-            font=("Arial", 30, "bold"),
+            font=("Segoe UI", 30, "bold"),
             text_color="white"
         )
         recipes_title.pack(pady=10)
@@ -608,7 +617,7 @@ class RecipeViewer:
             label = ctk.CTkLabel(
                 recipes_frame,
                 text=f"- {recipe}",
-                font=("Arial", 18),
+                font=("Segoe UI", 18),
                 text_color="white"
             )
             label.pack(anchor="w", padx=20, pady=2)
@@ -618,7 +627,7 @@ class RecipeViewer:
         back_button = ctk.CTkButton(
             self.frame,
             text="Back",
-            font=("Arial", 20, "bold"),
+            font=("Segoe UI", 20, "bold"),
             fg_color="#D32F2F",  # Red color
             hover_color="#E53935",
             width=150,
@@ -653,22 +662,22 @@ class CookingRecipesView:
         for widget in self.frame.winfo_children():
             widget.destroy()
 
-        label = ctk.CTkLabel(self.frame, text="Cooking Recipes", font=("Arial", 60, "bold"))
+        label = ctk.CTkLabel(self.frame, text="Cooking Recipes", font=("Segoe UI", 60, "bold"))
         label.pack(pady=30)
 
         button1 = ctk.CTkButton(self.frame, text="Easy", width=300, height=300, corner_radius=50,
                                 command=self.easy_recipes,
-                                fg_color="green", font=("Arial", 40, "bold"), hover_color="#006400")
+                                fg_color="#F2EBDC", font=("Segoe UI", 40, "bold"), hover_color="#4F7942")
         button1.pack(side="left", padx=10, expand=True)
 
         button2 = ctk.CTkButton(self.frame, text="Medium", width=300, height=300, corner_radius=50,
                                 command=self.medium_recipes,
-                                fg_color="orange", font=("Arial", 40, "bold"), hover_color="#FF8C00")
+                                fg_color="#D9CDBF", font=("Segoe UI", 40, "bold"), hover_color="#CC7722")
         button2.pack(side="left", padx=10, expand=True)
 
         button3 = ctk.CTkButton(self.frame, text="Hard", width=300, height=300, corner_radius=50,
                                 command=self.hard_recipes,
-                                fg_color="red", font=("Arial", 40, "bold"), hover_color="#8B0000")
+                                fg_color="#40382E", font=("Segoe UI", 40, "bold"), hover_color="#800000")
         button3.pack(side="left", padx=10, expand=True)
 
     def create_recipe_page(self, difficulty, food_names):
@@ -678,7 +687,7 @@ class CookingRecipesView:
         self.recipe_frame.pack(expand=True, fill="both")
         self.diff = difficulty
         self.foods = food_names
-        label = ctk.CTkLabel(self.recipe_frame, text=f"{difficulty} Recipes", font=("Arial", 50, "bold"), text_color="white")
+        label = ctk.CTkLabel(self.recipe_frame, text=f"{difficulty} Recipes", font=("Segoe UI", 50, "bold"), text_color="#D9CDBF")
         label.pack(pady=20)
 
         self.favorites = {food: False for food in food_names}
@@ -687,9 +696,9 @@ class CookingRecipesView:
             frame = ctk.CTkFrame(self.recipe_frame, fg_color="transparent")
             frame.pack(pady=10)
 
-            button = ctk.CTkButton(frame, text=food.name, font=("Arial", 30, "bold"), fg_color="#4C4F52",
+            button = ctk.CTkButton(frame, text=food.name, font=("Segoe UI", 30, "bold"), fg_color="#4C4F52",
                                    hover_color="#676A6D",
-                                   corner_radius=15, text_color="white",
+                                   corner_radius=15, text_color="White",
                                    command=lambda f=food: self.food_clicked(f))
             button.pack(side="left", padx=20, expand=True)
 
@@ -699,21 +708,21 @@ class CookingRecipesView:
                 self.favorites[f] = not self.favorites[f]
                 var.set("★" if self.favorites[f] else "☆")
 
-            star_button = ctk.CTkButton(frame, textvariable=star_var, font=("Arial", 40),
+            star_button = ctk.CTkButton(frame, textvariable=star_var, font=("Segoe UI", 40),
                                         fg_color="transparent", text_color="yellow", hover_color="#676A6D",
                                         command=toggle_star)
             star_button.pack(side="right", padx=20, expand=True)
 
-        hotbar_frame = ctk.CTkFrame(self.recipe_frame, fg_color="#3A3D40")
+        hotbar_frame = ctk.CTkFrame(self.recipe_frame, fg_color="#C4A484")
         hotbar_frame.pack(side="bottom", fill="x")
 
-        refresh_button = ctk.CTkButton(hotbar_frame, text="Refresh", font=("Arial", 30, "bold"), fg_color="#FF9800",
-                                       hover_color="#FFA726", corner_radius=10,
+        refresh_button = ctk.CTkButton(hotbar_frame, text="Refresh", font=("Segoe UI", 30, "bold"), fg_color="#F2EBDC",
+                                       hover_color="#D9CDBF", corner_radius=10,
                                        command=lambda: print("Refresh clicked!"))
         refresh_button.pack(side="left", pady=5, expand=True)
 
-        back_button = ctk.CTkButton(hotbar_frame, text="Back", font=("Arial", 30, "bold"), fg_color="#D32F2F",
-                                    hover_color="#E53935", corner_radius=10,
+        back_button = ctk.CTkButton(hotbar_frame, text="Back", font=("Segoe UI", 30, "bold"), fg_color="#D9CDBF",
+                                    hover_color="#C19A6B", corner_radius=10,
                                     command=self.main_menu)
         back_button.pack(side="right", pady=5, expand=True)
 
@@ -737,8 +746,10 @@ class ModernCalendar:
         self.event_callback = event_callback
         self.parent = parent
         self.task_class = task_class
-        self.frame = ctk.CTkFrame(parent, fg_color="#3C3D40")
+        self.frame = ctk.CTkFrame(parent, fg_color="transparent")
         self.frame.pack(side="right", fill="both", padx=20, pady=10)
+        self.calendar_frame = ctk.CTkFrame(self.frame, fg_color=Constants.LIGHT_GREY)
+        self.calendar_frame.pack(side="right", expand=True)
         self.buttons_with_tasks = []
 
         # Default to current date if none provided
@@ -753,40 +764,40 @@ class ModernCalendar:
     def create_widgets(self):
         self.create_header()
         self.create_day_labels()
-        self.buttons_frame = ctk.CTkFrame(self.frame, fg_color="transparent")
+        self.buttons_frame = ctk.CTkFrame(self.calendar_frame, fg_color="transparent")
         self.buttons_frame.pack(pady=(5, 10))
 
     def create_header(self):
-        self.header_frame = ctk.CTkFrame(self.frame, fg_color="#2c3e50")
+        self.header_frame = ctk.CTkFrame(self.calendar_frame, fg_color="#D9CDBF")
         self.header_frame.pack(fill="x", pady=10)
 
         self.prev_button = ctk.CTkButton(
-            self.header_frame, text="◀", width=30, fg_color="#34495e",
+            self.header_frame, text="◀", width=30, fg_color="#8C877D",
             command=self.prev_month, font=("Segoe UI", 14, "bold")
         )
         self.prev_button.pack(side="left", padx=10, pady=5)
 
         self.month_label = ctk.CTkLabel(
             self.header_frame, text="", font=("Segoe UI", 16, "bold"),
-            fg_color="transparent", text_color="white"
+            fg_color="transparent", text_color="black"
         )
         self.month_label.pack(side="left", expand=True)
 
         self.next_button = ctk.CTkButton(
-            self.header_frame, text="▶", width=30, fg_color="#34495e",
+            self.header_frame, text="▶", width=30, fg_color="#8C877D",
             command=self.next_month, font=("Segoe UI", 14, "bold")
         )
         self.next_button.pack(side="right", padx=10, pady=5)
 
     def create_day_labels(self):
-        self.days_frame = ctk.CTkFrame(self.frame, fg_color="transparent")
+        self.days_frame = ctk.CTkFrame(self.calendar_frame, fg_color="transparent")
         self.days_frame.pack()
         days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
         for day in days:
             lbl = ctk.CTkLabel(
                 self.days_frame, text=day, font=("Segoe UI", 11, "bold"),
-                fg_color="transparent", text_color="#2c3e50"
+                fg_color="transparent", text_color="#D9CDBF"
             )
             lbl.pack(side="left", expand=True, padx=5, pady=2)
 
@@ -821,7 +832,7 @@ class ModernCalendar:
             r, c = divmod(index, 7)
             
             btn_fg = "#2c3e50" if in_current  else "#bdc3c7"
-            btn_bg = "#d3d3d3" if self.selected_date == cell_date else "#ffffff"
+            btn_bg = "#8C877D" if self.selected_date == cell_date else "#ffffff"
             print(cell_date, self.buttons_with_tasks)
             if cell_date in self.buttons_with_tasks:
                 btn_bg="#5C6D70"
@@ -830,7 +841,7 @@ class ModernCalendar:
                 font=("Segoe UI", 12, "bold"),
                 fg_color=btn_bg, text_color=btn_fg, width=40, height=40,
                 command=lambda d=cell_date: self.on_day_click(d),
-                hover_color="#5C6770"
+                hover_color="#D9CDBF"
             )
             btn.grid(row=r, column=c, padx=5, pady=5)
 

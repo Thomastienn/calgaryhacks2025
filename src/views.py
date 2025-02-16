@@ -104,8 +104,9 @@ class MainMenu:
             self.frame,
             text="Enter",
             font=("Segoe UI", 20, "bold"),
-            fg_color="#D9CDBF",  #millk color
+            fg_color=Constants.MILK,  #millk color
             hover_color="#C19A6B",
+            text_color = Constants.DARK_GREY,
             width=200,
             height=50,
             corner_radius=10,
@@ -127,15 +128,15 @@ class TabsView:
         self.create_buttons()
         
     def create_buttons(self):
-        self.finance_button = ctk.CTkButton(self.frame, text="Finance", command=self.finance_button_click)
+        self.finance_button = ctk.CTkButton(self.frame, text="Finance", command=self.finance_button_click, fg_color=Constants.MILK, font=(Constants.FONT, 25, "bold"), text_color=Constants.DARK_GREY, hover_color="#CBAC8A")
         self.finance_button.pack(side="left", expand=True)
-        self.tasks_button = ctk.CTkButton(self.frame, text="Tasks", command=self.tasks_button_click)
+        self.tasks_button = ctk.CTkButton(self.frame, text="Tasks", command=self.tasks_button_click,fg_color=Constants.MILK, font=(Constants.FONT, 25, "bold"), text_color=Constants.DARK_GREY, hover_color="#CBAC8A")
         self.tasks_button.pack(side="left", expand=True)
-        self.house_button = ctk.CTkButton(self.frame, text="Renting", command=self.house_button_click)
+        self.house_button = ctk.CTkButton(self.frame, text="Renting", command=self.house_button_click,fg_color=Constants.MILK, font=(Constants.FONT, 25, "bold"), text_color=Constants.DARK_GREY, hover_color="#CBAC8A")
         self.house_button.pack(side="left", expand=True)
-        self.jobs_button = ctk.CTkButton(self.frame, text="Jobs", command=self.jobs_button_click)
+        self.jobs_button = ctk.CTkButton(self.frame, text="Jobs", command=self.jobs_button_click,fg_color=Constants.MILK, font=(Constants.FONT, 25, "bold"), text_color=Constants.DARK_GREY, hover_color="#CBAC8A")
         self.jobs_button.pack(side="left", expand=True)
-        self.recipies_button = ctk.CTkButton(self.frame, text="Recipies", command=self.recipies_button_click)
+        self.recipies_button = ctk.CTkButton(self.frame, text="Recipies", command=self.recipies_button_click,fg_color=Constants.MILK, font=(Constants.FONT, 25, "bold"), text_color=Constants.DARK_GREY, hover_color="#CBAC8A")
         self.recipies_button.pack(side="left",expand=True)
         
     def switch_view(self, new_view):
@@ -164,17 +165,17 @@ class TabsView:
 class FinanceView:
     def __init__(self, parent):
         self.tracker = FinanceTracker()
-        self.frame = ctk.CTkFrame(parent, fg_color="#3C3D40")
+        self.frame = ctk.CTkFrame(parent, fg_color=Constants.DARK_GREY)
         self.frame.pack_propagate(False)
         self.frame.pack(fill="both", expand=True)
-        self.finance_table = ctk.CTkFrame(self.frame, width=700)
+        self.finance_table = ctk.CTkFrame(self.frame, width=700, fg_color=Constants.DARK_GREY)
         self.finance_table.pack_propagate(False)
         self.finance_table.pack(side="left", padx=10, pady=10, fill="y")
-        self.add_finance_frame = ctk.CTkFrame(self.finance_table, height=50, fg_color="green")
+        self.add_finance_frame = ctk.CTkFrame(self.finance_table, height=50, fg_color=Constants.DARK_GREY, corner_radius=0)
         self.add_finance_frame.pack_propagate(False)
         self.add_finance_frame.pack(fill="x")
         self.selected_option = ctk.StringVar()
-        self.categories_dropdown = ctk.CTkOptionMenu(self.add_finance_frame, variable=self.selected_option, values=Thing.OPTIONS_STR)
+        self.categories_dropdown = ctk.CTkOptionMenu(self.add_finance_frame, variable=self.selected_option, values=Thing.OPTIONS_STR, fg_color=Constants.LIGHT_GREY, dropdown_text_color=Constants.MILK, button_color=Constants.LIGHT_GREY,button_hover_color=Constants.DARK_GREY, font=(Constants.FONT, 15, "bold"))
         self.categories_dropdown.set("Select a Category")
         self.categories_dropdown.pack(side="left", padx=5)
         self.add_finance_entry = ctk.CTkEntry(self.add_finance_frame)
@@ -188,9 +189,9 @@ class FinanceView:
         self.date_entry = ctk.CTkEntry(self.add_finance_frame)
         self.date_entry.pack(side="left")
         self.date_entry.insert(0, str(datetime.now().date()))
-        self.add_button = ctk.CTkButton(self.add_finance_frame, text="+", command=self.add_button_press)
+        self.add_button = ctk.CTkButton(self.add_finance_frame, text="+", command=self.add_button_press, fg_color=Constants.LIGHT_GREY, font=(Constants.FONT, 15, "bold"))
         self.add_button.pack(side="left", padx=10)
-        self.finance_scroll_frame = ctk.CTkScrollableFrame(self.finance_table, fg_color="black")
+        self.finance_scroll_frame = ctk.CTkScrollableFrame(self.finance_table, fg_color=Constants.LIGHT_GREY)
         self.finance_scroll_frame.pack(fill="both", expand=True)
         
         self.pie_chart_frame = ctk.CTkFrame(self.frame, fg_color="#3C3D40")
@@ -208,18 +209,20 @@ class FinanceView:
                     date = f"{year}-{month}-{day}"
                     for stuff in self.tracker.finance_list.getItem(year,month,day):
                         if date not in self.date_frames:
-                            self.date_frames[date] = ctk.CTkFrame(self.finance_scroll_frame)
+                            self.date_frames[date] = ctk.CTkFrame(self.finance_scroll_frame, fg_color=Constants.MILK)
                             self.date_frames[date].pack(side="top", fill="x", pady=5)
                             current_date_label = ctk.CTkLabel(self.date_frames[date],
-                                                              text=f"{year}-{month}-{day}")
+                                                              text=f"{year}-{month}-{day}",
+                                                              text_color=Constants.DARK_GREY,
+                                                              font=(Constants.FONT, 20, "bold"))
                             current_date_label.pack(side="top")
-                        finance_frame = ctk.CTkFrame(self.date_frames[date], height=35)
+                        finance_frame = ctk.CTkFrame(self.date_frames[date], height=35, fg_color="#6D5F50")
                         finance_frame.pack(fill="x", side="top", padx=5, pady=5)
-                        category_text = ctk.CTkLabel(finance_frame, text=stuff.type)
+                        category_text = ctk.CTkLabel(finance_frame, text=stuff.type,font=(Constants.FONT, 15, "bold"))
                         category_text.pack(side="left", padx=50)
-                        name_text = ctk.CTkLabel(finance_frame, text=stuff.name)
+                        name_text = ctk.CTkLabel(finance_frame, text=stuff.name,font=(Constants.FONT, 15, "bold"))
                         name_text.pack(side="left", expand=True)
-                        amount_text = ctk.CTkLabel(finance_frame, text="$" + str(stuff.amount))
+                        amount_text = ctk.CTkLabel(finance_frame, text="$" + str(stuff.amount),font=(Constants.FONT, 15, "bold"))
                         amount_text.pack(side="left", expand=True)
         try:
             self.pie_chart.update_chart(self.tracker)
@@ -234,19 +237,21 @@ class FinanceView:
         # Check if valid
         year, month, day = map(int, self.date_entry.get().split("-"))
         if True:
-            if self.tracker.dateEmpty(year, month, day):
-                self.date_frames[self.date_entry.get()] = ctk.CTkFrame(self.finance_scroll_frame)
-                self.date_frames[self.date_entry.get()].pack(side="top", fill="x", pady=5)
-                current_date_label = ctk.CTkLabel(self.date_frames[self.date_entry.get()], text=f"{year}-{month}-{day}")
+            if self.date_entry.get() not in self.date_frames:
+                self.date_frames[date] = ctk.CTkFrame(self.finance_scroll_frame, fg_color=Constants.MILK)
+                self.date_frames[date].pack(side="top", fill="x", pady=5)
+                current_date_label = ctk.CTkLabel(self.date_frames[date],
+                                                    text=f"{year}-{month}-{day}",
+                                                    text_color=Constants.DARK_GREY,
+                                                    font=(Constants.FONT, 20, "bold"))
                 current_date_label.pack(side="top")
-            
-            finance_frame = ctk.CTkFrame(self.date_frames[self.date_entry.get()], height=35)
+            finance_frame = ctk.CTkFrame(self.date_frames[date], height=35, fg_color="#6D5F50")
             finance_frame.pack(fill="x", side="top", padx=5, pady=5)
-            category_text = ctk.CTkLabel(finance_frame, text=category)
+            category_text = ctk.CTkLabel(finance_frame, text=self.date_frames[self.date_entry.get()].type,font=(Constants.FONT, 15, "bold"))
             category_text.pack(side="left", padx=50)
-            name_text = ctk.CTkLabel(finance_frame, text=name)
+            name_text = ctk.CTkLabel(finance_frame, text=name,font=(Constants.FONT, 15, "bold"))
             name_text.pack(side="left", expand=True)
-            amount_text = ctk.CTkLabel(finance_frame, text="$" + cost)
+            amount_text = ctk.CTkLabel(finance_frame, text="$" + cost,font=(Constants.FONT, 15, "bold"))
             amount_text.pack(side="left", expand=True)
             
             self.tracker.put(name, float(cost), category, self.date_entry.get())
@@ -367,9 +372,9 @@ class TasksView:
 class RentingView:
     def __init__(self,parent): 
         self.get_images()
-        self.frame = CTkFrame(parent)
+        self.frame = CTkFrame(parent, fg_color=Constants.DARK_GREY)
         self.frame.pack(fill="both", expand=True)
-        self.scrolling_frame = ctk.CTkScrollableFrame(self.frame)
+        self.scrolling_frame = ctk.CTkScrollableFrame(self.frame, fg_color=Constants.DARK_GREY)
         self.scrolling_frame.pack(fill="both", expand=True)
         self.loading()
         parent.update_idletasks()
@@ -380,11 +385,11 @@ class RentingView:
         self.renter = RentFinder()
         house_list = self.renter.getHouses()
         count = 1
-        self.current_house_row = ctk.CTkFrame(self.scrolling_frame)
+        self.current_house_row = ctk.CTkFrame(self.scrolling_frame, fg_color=Constants.DARK_GREY)
         for house in house_list:
             if count > 3:
                 self.current_house_row.pack(padx=10, pady=10, expand=True, fill="x")
-                self.current_house_row = ctk.CTkFrame(self.scrolling_frame)
+                self.current_house_row = ctk.CTkFrame(self.scrolling_frame, fg_color=Constants.DARK_GREY)
                 count = 1
             self.create_house(house.title, house.cost, house.address, house.link)
             count += 1
@@ -412,19 +417,19 @@ class RentingView:
         loading_frame_text.pack(expand=True, fill="both")
         
     def create_house(self, title, cost, address, link):
-        house_frame = ctk.CTkFrame(self.current_house_row, width=400, height=400, fg_color="black")
+        house_frame = ctk.CTkFrame(self.current_house_row, width=400, height=400, fg_color=Constants.DARK_BROWN)
         house_frame.pack_propagate(False)
-        house_cost = ctk.CTkLabel(house_frame, text=f"${cost}/month")
+        house_cost = ctk.CTkLabel(house_frame, text=f"${cost}/month", font=(Constants.FONT, 20, "bold"), text_color=Constants.MILK)
         if cost is None:
-            house_cost.configure(text="Inquire for price")
+            house_cost.configure(text="Inquire for price", font=(Constants.FONT, 20, "bold"))
         house_cost.pack(side="top", expand=True)
         house_img = ctk.CTkLabel(house_frame, text="", image=self.scaled_house_image, fg_color="transparent")
         house_img.pack(side="top", expand=True)
-        house_title = ctk.CTkLabel(house_frame, text=f"{title}")
+        house_title = ctk.CTkLabel(house_frame, text=f"{title}",font=(Constants.FONT, 16, "bold"),text_color=Constants.MILK)
         house_title.pack(side="top", expand=True)
-        house_address = ctk.CTkLabel(house_frame, text=f"{address}")
+        house_address = ctk.CTkLabel(house_frame, text=f"{address}", font=(Constants.FONT, 13),text_color=Constants.MILK)
         house_address.pack(side="top", expand=True)
-        house_link = ctk.CTkLabel(house_frame, text="View more information", font=("Arial", 16, "underline"), text_color="#ADD8E6", cursor="hand2")
+        house_link = ctk.CTkLabel(house_frame, text="View more information", font=(Constants.FONT, 16, "underline"), text_color=Constants.LIGHT_GREY, cursor="hand2")
         house_link.bind("<Button-1>", lambda e: self.callback(link))
         house_link.pack(side="top", expand=True)
         house_frame.pack(side="left", expand=True, padx=10)

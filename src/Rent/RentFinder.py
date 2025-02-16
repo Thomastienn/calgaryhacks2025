@@ -7,13 +7,20 @@ class RentFinder:
         self.page = None
         self.soup = None
         self.houses = []
+        self.refresh()
+        
+    def refresh(self):
         self.request()
+        self.parseHouses()
         
     def request(self):
         self.page = requests.get(self.LINK)
         self.soup = BeautifulSoup(self.page.content, "html.parser")
     
-    def getHouses(self):
+    def getHouses(self) -> list:
+        return self.houses
+    
+    def parseHouses(self) -> None:
         if self.soup == None:
             assert False, "Haven't request"
         cards = self.soup.find_all("section", {"data-testid": "listing-card"})

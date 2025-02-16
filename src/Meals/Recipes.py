@@ -33,8 +33,12 @@ class Recipes:
         return self.meals[self.EACH: self.EACH*2]
 
     def getHard(self):
-        pass
+        assert self.meals, "No meals"
+        return self.meals[-self.EACH:]
 
     
-a = Recipes()
-print(a.getMeal())
+# a = Recipes()
+
+# print(a.getEasy())
+# print(a.getMedium())
+# print(a.getHard())

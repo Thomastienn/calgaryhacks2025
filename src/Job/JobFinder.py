@@ -7,13 +7,17 @@ class JobFinder:
         self.page = None
         self.soup = None
         self.jobs = []
+        self.refresh()
+    
+    def refresh(self):
         self.request()
+        self.getJobs()
         
     def request(self):
         self.page = requests.get(self.LINK)
         self.soup = BeautifulSoup(self.page.content, "html.parser")
     
-    def getHouses(self):
+    def getJobs(self):
         if self.soup == None:
             assert False, "Haven't request"
         divs = self.soup.find_all("div", class_="details-wrapper")
@@ -22,7 +26,9 @@ class JobFinder:
             date = offer_detail.find("a", class_="date").text.strip()
             title = offer_detail.find("a", class_="offer-name").text.strip()
             company = div.find("a", class_="company").text.strip()
-            
-            job = Job(title,date,company)
+            link = div.find("a", class_="offer-name").get("href")
+            job = Job(title,date,company,link)
             self.jobs.append(job)
+            
+# a = JobFinder()
             

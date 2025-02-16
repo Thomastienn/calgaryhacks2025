@@ -313,10 +313,8 @@ class TasksView:
         try:
             # Using .copy() keeps the image saved in memory so I don't have to keep opening the images to access them
             with Image.open(
-                    "src/img/trash.png").copy() as trash_image, Image.open(
-                "src/img/trashRed.png").copy() as trash_red_image:
+                    "src/img/trash.png").copy() as trash_image:
                 self.scaled_trash_image = ctk.CTkImage(trash_image, size=(50, 50))
-                self.scaled_trash_red_image = ctk.CTkImage(trash_red_image, size=(50, 50))
         except FileNotFoundError as e:
             print(f"Cannot access all image dependencies: {e}")
             raise SystemExit
@@ -351,21 +349,16 @@ class TasksView:
 
             # Remove button on the right
             remove_button = ctk.CTkButton(
-                task_frame, text="", fg_color="transparent", width=70, height=70, image=self.scaled_trash_image,
+                task_frame, text="", fg_color="transparent", width=70, height=70, image=self.scaled_trash_image, hover_color="#FF6666",
                 command=lambda: self.remove_task_item(task_frame)
             )
-            index = len(self.buttons)
             self.buttons.append(remove_button)
-            remove_button.bind("<Enter>", lambda: self.on_hover(index))
             remove_button.pack(side="right", padx=(0, 10))
 
             self.task_entry.delete(0, ctk.END)
             
             self.frame_dict[self.calendar_frame.get_selected_date()] = self.tasks_frame
             self.calendar_frame.dot_update()
-    
-    def on_hover(self, index):
-        self.buttons[index].configure(image=self.scaled_trash_red_image)
 
     def toggle_task(self, checkbox):
         # Change text color based on whether the checkbox is checked
@@ -703,7 +696,7 @@ class CookingRecipesView:
     
     def loading(self):
         self.loading_frame = ctk.CTkFrame(self.frame, width=self.frame.winfo_width()//2, height=self.frame.winfo_height()//2)
-        self.loading_frame.place(relx=0, rely=0)
+        self.loading_frame.pack(fill="both", expand=True)
         self.loading_frame.pack_propagate(False)
         loading_frame_text = ctk.CTkLabel(self.loading_frame, text="Retrieving Recipe Data...", font=("Arial", 100, "bold"))
         loading_frame_text.pack(expand=True, fill="both")

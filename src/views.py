@@ -10,7 +10,7 @@ from src.Finance.FinanceTracker import FinanceTracker
 from src.Finance.Thing import Thing
 from src.models import PieChartApp
 from src.Rent.RentFinder import RentFinder
-from datetime import datetime
+from datetime import datetime, date, timedelta
 from PIL import Image
 
 import src.utils as utils
@@ -52,7 +52,8 @@ class TabsView:
         for widget in self.parent.winfo_children():
             if widget != self.frame:
                 widget.destroy()
-        new_view(self.parent)
+            view = new_view(self.parent)
+            
         
     def finance_button_click(self):
         self.switch_view(FinanceView)
@@ -118,7 +119,7 @@ class FinanceView:
                 self.date_frames[self.date_entry.get()].pack(side="top", fill="x", pady=5)
                 current_date_label = ctk.CTkLabel(self.date_frames[self.date_entry.get()], text=f"{year}-{month}-{day}")
                 current_date_label.pack(side="top")
-
+            
             finance_frame = ctk.CTkFrame(self.date_frames[self.date_entry.get()], height=35)
             finance_frame.pack(fill="x", side="top", padx=5, pady=5)
             category_text = ctk.CTkLabel(finance_frame, text=category)
@@ -136,27 +137,31 @@ class TasksView:
     def __init__(self, root):
         self.get_images()
         self.buttons = []
-        self.root = root
-        self.root.config(bg="#333333")
-        ctk.set_appearance_mode("Dark")
+        self.frame = ctk.CTkFrame(root)
+        self.frame.pack(expand=True, fill="both")
+        self.todo_frame = ctk.CTkFrame(self.frame, fg_color="transparent")
+        self.todo_frame.pack(side="left", expand=True, fill="both", padx=10)
+        self.frame_dict = {}
+        self.calendar_frame = ModernCalendar(self, self.frame)
+        
 
         self.task_entry = ctk.CTkEntry(
-            root, width=300, placeholder_text="Enter the task", font=("Arial", 14)
+            self.todo_frame, width=300, placeholder_text="Enter the task", font=("Arial", 14)
         )
         self.task_entry.pack(pady=20)
 
         self.add_button = ctk.CTkButton(
-            self.root, text="Add Task", width=200, height=40, font=("Arial", 14),
+            self.todo_frame, text="Add Task", width=200, height=40, font=("Arial", 14),
             command=self.add_task
         )
         self.add_button.pack(pady=10)
 
         # Frame to hold all task items
-        self.tasks_frame = ctk.CTkFrame(self.root, height=200)
+        self.tasks_frame = ctk.CTkFrame(self.todo_frame, height=200, fg_color="#3C3D40")
         self.tasks_frame.pack(pady=10, fill="both", expand=True)
 
         self.clear_button = ctk.CTkButton(
-            self.root, text="Clear All", width=200, height=40, font=("Arial", 14),
+            self.todo_frame, text="Clear All", width=200, height=40, font=("Arial", 14),
             command=self.clear_all_tasks
         )
         self.clear_button.pack(pady=5)
@@ -173,6 +178,17 @@ class TasksView:
         except FileNotFoundError as e:
             print(f"Cannot access all image dependencies: {e}")
             raise SystemExit
+    
+    def switch_view(self, selected_date):
+        self.tasks_frame.pack_forget()
+        self.clear_button.pack_forget()
+        if selected_date in self.frame_dict:
+            self.tasks_frame = self.frame_dict[selected_date]
+        else:
+            self.tasks_frame = ctk.CTkFrame(self.todo_frame, height=200, fg_color="#3C3D40")
+        self.tasks_frame.pack(pady=10, fill="both", expand=True)
+        self.clear_button.pack(pady=5)
+        
 
     def add_task(self):
         task = self.task_entry.get().strip()
@@ -199,9 +215,12 @@ class TasksView:
             remove_button.pack(side="right", padx=(0, 10))
 
             self.task_entry.delete(0, ctk.END)
+            
+            self.frame_dict[self.calendar_frame.get_selected_date()] = self.tasks_frame
+            self.calendar_frame.dot_update()
     
     def on_hover(self, index):
-        self.buttons[index].config(image=self.scaled_trash_red_image)
+        self.buttons[index].configure(image=self.scaled_trash_red_image)
 
     def toggle_task(self, checkbox):
         # Change text color based on whether the checkbox is checked
@@ -282,4 +301,140 @@ class RentingView:
         house_link.pack(side="top", expand=True)
         house_frame.pack(side="left", expand=True, padx=10)
         
+class ModernCalendar:
+    def __init__(self, task_class, parent, event_callback=None, year=None, month=None):
+        self.event_callback = event_callback
+        self.parent = parent
+        self.task_class = task_class
+        self.frame = ctk.CTkFrame(parent, fg_color="#3C3D40")
+        self.frame.pack(side="right", fill="both", padx=20, pady=10)
+        self.buttons_with_tasks = []
+
+        # Default to current date if none provided
+        today = date.today()
+        self.year = year if year is not None else today.year
+        self.month = month if month is not None else today.month
+        self.selected_date = None
+
+        self.create_widgets()
+        self.draw_calendar()
+
+    def create_widgets(self):
+        self.create_header()
+        self.create_day_labels()
+        self.buttons_frame = ctk.CTkFrame(self.frame, fg_color="transparent")
+        self.buttons_frame.pack(pady=(5, 10))
+
+    def create_header(self):
+        self.header_frame = ctk.CTkFrame(self.frame, fg_color="#2c3e50")
+        self.header_frame.pack(fill="x", pady=10)
+
+        self.prev_button = ctk.CTkButton(
+            self.header_frame, text="◀", width=30, fg_color="#34495e",
+            command=self.prev_month, font=("Segoe UI", 14, "bold")
+        )
+        self.prev_button.pack(side="left", padx=10, pady=5)
+
+        self.month_label = ctk.CTkLabel(
+            self.header_frame, text="", font=("Segoe UI", 16, "bold"),
+            fg_color="transparent", text_color="white"
+        )
+        self.month_label.pack(side="left", expand=True)
+
+        self.next_button = ctk.CTkButton(
+            self.header_frame, text="▶", width=30, fg_color="#34495e",
+            command=self.next_month, font=("Segoe UI", 14, "bold")
+        )
+        self.next_button.pack(side="right", padx=10, pady=5)
+
+    def create_day_labels(self):
+        self.days_frame = ctk.CTkFrame(self.frame, fg_color="transparent")
+        self.days_frame.pack()
+        days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+
+        for day in days:
+            lbl = ctk.CTkLabel(
+                self.days_frame, text=day, font=("Segoe UI", 11, "bold"),
+                fg_color="transparent", text_color="#2c3e50"
+            )
+            lbl.pack(side="left", expand=True, padx=5, pady=2)
+
+    def draw_calendar(self, date_selected=None):
+        for widget in self.buttons_frame.winfo_children():
+            widget.destroy()
+
+        self.month_label.configure(text=f"{self.get_month_name(self.month)} {self.year}")
+
+        first_day = date(self.year, self.month, 1)
+        first_day_weekday = (first_day.weekday() + 1) % 7
+        num_days = self.days_in_month(self.year, self.month)
+
+        # Determine previous and next month info for leading/trailing days
+        prev_year, prev_month = (self.year, self.month - 1) if self.month > 1 else (self.year - 1, 12)
+        next_year, next_month = (self.year, self.month + 1) if self.month < 12 else (self.year + 1, 1)
+        num_days_prev = self.days_in_month(prev_year, prev_month)
+
+        # Create a list of (date, is_current_month)
+        day_cells = []
+        for i in range(first_day_weekday):
+            day_cells.append((date(prev_year, prev_month, num_days_prev - first_day_weekday + 1 + i), False))
+        for d in range(1, num_days + 1):
+            day_cells.append((date(self.year, self.month, d), True))
+        next_day = 1
+        while len(day_cells) < 42:
+            day_cells.append((date(next_year, next_month, next_day), False))
+            next_day += 1
+
+        # Create calendar grid
+        for index, (cell_date, in_current) in enumerate(day_cells):
+            r, c = divmod(index, 7)
+            
+            btn_fg = "#2c3e50" if in_current  else "#bdc3c7"
+            btn_bg = "#d3d3d3" if self.selected_date == cell_date else "#ffffff"
+            print(cell_date, self.buttons_with_tasks)
+            if cell_date in self.buttons_with_tasks:
+                btn_bg="#5C6D70"
+            btn = ctk.CTkButton(
+                self.buttons_frame, text=str(cell_date.day),
+                font=("Segoe UI", 12, "bold"),
+                fg_color=btn_bg, text_color=btn_fg, width=40, height=40,
+                command=lambda d=cell_date: self.on_day_click(d),
+                hover_color="#5C6770"
+            )
+            btn.grid(row=r, column=c, padx=5, pady=5)
+
+    def on_day_click(self, cell_date):
+        self.selected_date = cell_date
+        self.task_class.switch_view(self.selected_date)
+        self.draw_calendar()
+        if self.event_callback:
+            self.event_callback(cell_date.strftime("%Y-%m-%d"))
+
+    def prev_month(self):
+        self.month -= 1
+        if self.month < 1:
+            self.month = 12
+            self.year -= 1
+        self.draw_calendar()
+
+    def next_month(self):
+        self.month += 1
+        if self.month > 12:
+            self.month = 1
+            self.year += 1
+        self.draw_calendar()
+
+    def days_in_month(self, year, month):
+        return (date(year, month % 12 + 1, 1) - timedelta(days=1)).day
+
+    def get_month_name(self, month):
+        return ["January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"][month - 1]
+
+    def get_selected_date(self):
+        return self.selected_date
+    
+    def dot_update(self):
+        self.buttons_with_tasks.append(self.get_selected_date())
+        self.draw_calendar()
         

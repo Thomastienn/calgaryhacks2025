@@ -151,7 +151,7 @@ class TabsView:
         self.switch_view(RentingView)
     
     def jobs_button_click(self):
-        pass
+        self.switch_view(JobsView)
 
 class FinanceView:
     def __init__(self, parent):
@@ -413,6 +413,61 @@ class RentingView:
         house_link.pack(side="top", expand=True)
         house_frame.pack(side="left", expand=True, padx=10)
         
+class JobsView:
+    def __init__(self, root):
+        self.frame = ctk.CTkScrollableFrame(root)
+        self.frame.pack(expand=True, fill="both")
+        self.header = ctk.CTkLabel(self.frame, text="Job Postings Near You", font=("Arial", 40, "bold"))
+        self.header.pack(side="top", expand=True, pady=10)
+
+        self.job_list_frame = ctk.CTkFrame(self.frame)
+        self.job_list_frame.pack(fill="x", padx=20)
+
+        self.sample_job_data = [
+            {"title": "Software Engineer", "company": "ABC Corp", "location": "Jaipur", "date_posted": "2025-02-10",
+             "salary": "90,000", "description": "Develop and maintain software applications."},
+            {"title": "Data Scientist", "company": "XYZ Ltd", "location": "Delhi", "date_posted": "2025-02-12",
+             "salary": "110,000", "description": "Analyze and interpret complex data sets."},
+            {"title": "Web Developer", "company": "WebWorks", "location": "Bangalore", "date_posted": "2025-02-13",
+             "salary": "80,000", "description": "Build and maintain websites for clients."}
+        ]
+
+        self.display_jobs(self.sample_job_data)
+
+    def display_jobs(self, job_data):
+
+        if not job_data:
+            no_job_label = ctk.CTkLabel(self.job_list_frame, text="No jobs found.", font=("Arial", 14))
+            no_job_label.pack(pady=20)
+            return
+
+        for job in job_data:
+            job_frame = ctk.CTkFrame(self.job_list_frame, border_width=2, corner_radius=8)
+            job_frame.pack(fill="x", pady=10, padx=10)
+            job_title = job.get('title', 'No title')
+            company = job.get('company', 'No company')
+            location = job.get('location', 'No location')
+            date_posted = job.get('date_posted', 'No date')
+            salary = job.get('salary', 'Not specified')
+            job_description = job.get('description', 'No description available.')
+            title_label = ctk.CTkLabel(job_frame, text=f"{job_title}", font=("Arial", 20, "bold"))
+            title_label.pack(anchor="w", padx=5, pady=5)
+            company_label = ctk.CTkLabel(job_frame, text=f"{company}", font=("Arial", 14,))
+            company_label.pack(anchor="w", padx=5, pady=5)
+            location_label = ctk.CTkLabel(job_frame, text=f"{location}", font=("Arial", 14,))
+            location_label.pack(anchor="w", padx=5, pady=5)
+            date_posted_label = ctk.CTkLabel(job_frame, text=f"{date_posted}", font=("Arial", 14,))
+            date_posted_label.pack(anchor="w", padx=5, pady=5)
+            salary_label = ctk.CTkLabel(job_frame, text=f"Salary: {salary}", font=("Arial", 14,))
+            salary_label.pack(anchor="w", padx=5, pady=5)
+
+            job_description_label = ctk.CTkLabel(job_frame, text=f"Job Description: {job_description}",
+                                                 font=("Arial", 14,))
+            job_description_label.pack(anchor="w", padx=5, pady=5)
+        refresh_button = ctk.CTkButton(self.frame, text="Refresh")
+        refresh_button.pack(side="right", padx=30,pady=5)
+
+
 class ModernCalendar:
     def __init__(self, task_class, parent, event_callback=None, year=None, month=None):
         self.event_callback = event_callback
@@ -549,4 +604,5 @@ class ModernCalendar:
     def dot_update(self):
         self.buttons_with_tasks.append(self.get_selected_date())
         self.draw_calendar()
+
         

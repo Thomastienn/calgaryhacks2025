@@ -29,8 +29,6 @@ class PieChartApp:
         self.ax.clear()
 
         colors_to_use = self.select_colors(len(self.sizes))
-        print(self.labels)
-        print(self.sizes)
         self.ax.pie(self.sizes, labels=self.labels, autopct='%1.1f%%', colors=colors_to_use, startangle=90, textprops={'fontsize':20, 'color':'white'})
         self.ax.axis('equal')
 

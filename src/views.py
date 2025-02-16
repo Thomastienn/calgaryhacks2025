@@ -238,16 +238,16 @@ class FinanceView:
         year, month, day = map(int, self.date_entry.get().split("-"))
         if True:
             if self.date_entry.get() not in self.date_frames:
-                self.date_frames[date] = ctk.CTkFrame(self.finance_scroll_frame, fg_color=Constants.MILK)
-                self.date_frames[date].pack(side="top", fill="x", pady=5)
-                current_date_label = ctk.CTkLabel(self.date_frames[date],
+                self.date_frames[self.date_entry.get()] = ctk.CTkFrame(self.finance_scroll_frame, fg_color=Constants.MILK)
+                self.date_frames[self.date_entry.get()].pack(side="top", fill="x", pady=5)
+                current_date_label = ctk.CTkLabel(self.date_frames[self.date_entry.get()],
                                                     text=f"{year}-{month}-{day}",
                                                     text_color=Constants.DARK_GREY,
                                                     font=(Constants.FONT, 20, "bold"))
                 current_date_label.pack(side="top")
-            finance_frame = ctk.CTkFrame(self.date_frames[date], height=35, fg_color="#6D5F50")
+            finance_frame = ctk.CTkFrame(self.date_frames[self.date_entry.get()], height=35, fg_color="#6D5F50")
             finance_frame.pack(fill="x", side="top", padx=5, pady=5)
-            category_text = ctk.CTkLabel(finance_frame, text=self.date_frames[self.date_entry.get()].type,font=(Constants.FONT, 15, "bold"))
+            category_text = ctk.CTkLabel(finance_frame, text=category,font=(Constants.FONT, 15, "bold"))
             category_text.pack(side="left", padx=50)
             name_text = ctk.CTkLabel(finance_frame, text=name,font=(Constants.FONT, 15, "bold"))
             name_text.pack(side="left", expand=True)

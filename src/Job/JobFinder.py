@@ -24,11 +24,11 @@ class JobFinder:
         for div in divs:
             offer_detail = div.find("div", class_="offer-details")
             date = offer_detail.find("a", class_="date").text.strip()
-            title = offer_detail.find("a", class_="offer-name").text.strip()
+            title_desc = offer_detail.find("a", class_="offer-name").text.strip().split("\n")
+            title = title_desc[0].strip()
             company = div.find("a", class_="company").text.strip()
             link = div.find("a", class_="offer-name").get("href")
-            job = Job(title,date,company,link)
+            desc = title_desc[-1].strip()
+            job = Job(title,date,company,link, desc)
             self.jobs.append(job)
-            
-# a = JobFinder()
             

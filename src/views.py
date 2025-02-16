@@ -195,7 +195,7 @@ class FinanceView:
         self.finance_scroll_frame.pack(fill="both", expand=True)
         
         self.pie_chart_frame = ctk.CTkFrame(self.frame, fg_color="#3C3D40")
-        self.pie_chart_frame.pack(side="left", expand=True)
+        self.pie_chart_frame.pack(side="left", fill="both", expand=True)
         self.pie_chart_title = ctk.CTkLabel(self.pie_chart_frame, text="Overview of the Month", font=("Segoe UI", 30, "bold"))
         self.pie_chart_title.pack(side="top")
         self.pie_chart = PieChartApp(self.pie_chart_frame)
@@ -376,11 +376,11 @@ class RentingView:
     def __init__(self,parent): 
         self.get_images()
         self.frame = CTkFrame(parent, fg_color=Constants.DARK_GREY)
+        self.loading()
+        parent.update_idletasks()
         self.frame.pack(fill="both", expand=True)
         self.scrolling_frame = ctk.CTkScrollableFrame(self.frame, fg_color=Constants.DARK_GREY)
         self.scrolling_frame.pack(fill="both", expand=True)
-        self.loading()
-        parent.update_idletasks()
         self.rent_title = ctk.CTkLabel(self.scrolling_frame, text="Houses for rent near you", font=("Segoe UI", 30, "bold"))
         self.rent_title.pack(side="top", expand=True, fill="x")
         self.house_rows = []
@@ -414,9 +414,9 @@ class RentingView:
     
     def loading(self):
         self.loading_frame = ctk.CTkFrame(self.frame, width=self.frame.winfo_width()//2, height=self.frame.winfo_height()//2)
-        self.loading_frame.place(relx=0, rely=0)
+        self.loading_frame.pack(fill="both", expand=True)
         self.loading_frame.pack_propagate(False)
-        loading_frame_text = ctk.CTkLabel(self.loading_frame, text="Retrieving House Data...", font=("Arial", 100, "bold"))
+        loading_frame_text = ctk.CTkLabel(self.loading_frame, text="Retrieving House Data...", font=(Constants.FONT, 100, "bold"))
         loading_frame_text.pack(expand=True, fill="both")
         
     def create_house(self, title, cost, address, link):
@@ -440,16 +440,18 @@ class RentingView:
 class JobsView:
     def __init__(self, root):
         self.frame = ctk.CTkFrame(root)
-
-        self.scroll_frame = ctk.CTkScrollableFrame(self.frame)
         self.frame.pack(expand=True, fill="both")
+        
+        root.update_idletasks()
+        self.loading()
+        root.update_idletasks()
+        
+        self.scroll_frame = ctk.CTkScrollableFrame(self.frame)
         self.scroll_frame.pack(expand=True, fill="both")
         self.header = ctk.CTkLabel(self.scroll_frame, text="Job Postings Near You", font=("Arial", 40, "bold"))
 
         root.update_idletasks()
         self.header.pack(side="top", expand=True, pady=10)
-        self.loading()
-        root.update_idletasks()
 
         self.job_list_frame = ctk.CTkFrame(self.scroll_frame)
         self.job_list_frame.pack(fill="x", padx=20)
@@ -464,9 +466,9 @@ class JobsView:
         self.loading_frame = ctk.CTkFrame(self.frame, width=self.frame.winfo_width() // 2,
                                           height=self.frame.winfo_height() // 2)
         self.loading_frame.pack_propagate(False)
-        self.loading_frame.place(relx=0, rely=0)
+        self.loading_frame.pack(fill="both", expand=True)
         loading_frame_text = ctk.CTkLabel(self.loading_frame, text="Retrieving Job Info...",
-                                          font=("Arial", 100, "bold"))
+                                          font=(Constants.FONT, 100, "bold"))
         loading_frame_text.pack(expand=True, fill="both")
 
     def open_link(self, url):

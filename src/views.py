@@ -683,17 +683,17 @@ class CookingRecipesView:
 
         button1 = ctk.CTkButton(self.frame, text="Easy", width=300, height=300, corner_radius=50,
                                 command=self.easy_recipes,
-                                fg_color="#F2EBDC", font=("Segoe UI", 40, "bold"), hover_color="#4F7942")
+                                fg_color=Constants.LIGHT_GREY, font=(Constants.FONT, 40, "bold"), hover_color="#4F7942")
         button1.pack(side="left", padx=10, expand=True)
 
         button2 = ctk.CTkButton(self.frame, text="Medium", width=300, height=300, corner_radius=50,
                                 command=self.medium_recipes,
-                                fg_color="#D9CDBF", font=("Segoe UI", 40, "bold"), hover_color="#CC7722")
+                                fg_color=Constants.DARK_GREY, font=(Constants.FONT, 40, "bold"), hover_color="#CC7722")
         button2.pack(side="left", padx=10, expand=True)
 
         button3 = ctk.CTkButton(self.frame, text="Hard", width=300, height=300, corner_radius=50,
                                 command=self.hard_recipes,
-                                fg_color="#40382E", font=("Segoe UI", 40, "bold"), hover_color="#800000")
+                                fg_color="#40382E", font=(Constants.FONT, 40, "bold"), hover_color="#800000")
         button3.pack(side="left", padx=10, expand=True)
 
     def create_recipe_page(self, difficulty, food_names):
@@ -703,7 +703,7 @@ class CookingRecipesView:
         self.recipe_frame.pack(expand=True, fill="both")
         self.diff = difficulty
         self.foods = food_names
-        label = ctk.CTkLabel(self.recipe_frame, text=f"{difficulty} Recipes", font=("Segoe UI", 50, "bold"), text_color="#D9CDBF")
+        label = ctk.CTkLabel(self.recipe_frame, text=f"{difficulty} Recipes", font=(Constants.FONT, 50, "bold"), text_color="#D9CDBF")
         label.pack(pady=20)
 
         self.favorites = {food: False for food in food_names}
@@ -712,9 +712,9 @@ class CookingRecipesView:
             frame = ctk.CTkFrame(self.recipe_frame, fg_color="transparent")
             frame.pack(pady=10)
 
-            button = ctk.CTkButton(frame, text=food.name, font=("Segoe UI", 30, "bold"), fg_color="#4C4F52",
+            button = ctk.CTkButton(frame, text=food.name, font=(Constants.FONT, 30, "bold"), fg_color="#4C4F52",
                                    hover_color="#676A6D",
-                                   corner_radius=15, text_color="White",
+                                   corner_radius=15, text_color=Constants.LIGHT_GREY,
                                    command=lambda f=food: self.food_clicked(f))
             button.pack(side="left", padx=20, expand=True)
 

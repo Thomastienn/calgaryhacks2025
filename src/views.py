@@ -519,13 +519,15 @@ class RecipeViewer:
         self.frame = ctk.CTkFrame(root)
         self.frame.pack(expand=True, fill="both")
         self.cooking_class = cooking_class  # Large default window
-        self.frame.configure(fg_color="#2B2B2B")  # Dark background
+        self.frame.configure(fg_color=Constants.DARK_GREY)  # Dark background
         self.difficulty = difficulty
         # Store parameters
         self.country = country  # Country of origin
         self.ingredients = ingredients  # List of ingredients
         self.recipes = recipes  # List of recipes
         self.foods = foods
+        
+        self.title = title
 
         # Create the title label at the top
         self.create_title()
@@ -538,15 +540,15 @@ class RecipeViewer:
         """Creates the centered title at the top."""
         self.title_label = ctk.CTkLabel(
             self.frame,
-            text="Recipe Viewer",
-            font=("Arial", 50, "bold"),  # Large title font
-            text_color="white"
+            text=f"{self.title}",
+            font=(Constants.FONT, 50, "bold"),  # Large title font
+            text_color=Constants.MILK
         )
         self.title_label.pack(pady=20)  # Space below the title
 
     def create_country_box(self):
         """Creates a country display box in the top-right corner."""
-        country_frame = ctk.CTkFrame(self.frame, fg_color="#3C3D40", corner_radius=10, width=220,
+        country_frame = ctk.CTkFrame(self.frame, fg_color=Constants.DARK_BROWN, corner_radius=10, width=220,
                                      height=60)  # ✅ Wider box
         country_frame.place(relx=0.85, rely=0.05, anchor="ne")  # ✅ Position stays the same
 
@@ -558,8 +560,8 @@ class RecipeViewer:
         country_label = ctk.CTkLabel(
             inner_frame,
             text="Country:",
-            font=("Arial", 16, "bold"),
-            text_color="white"
+            font=(Constants.FONT, 16, "bold"),
+            text_color=Constants.MILK
         )
         country_label.pack(side="left", padx=5)  # ✅ Align to the left
 
@@ -567,8 +569,8 @@ class RecipeViewer:
         country_name_label = ctk.CTkLabel(
             inner_frame,
             text=self.country,
-            font=("Arial", 18, "bold"),
-            text_color="yellow"
+            font=(Constants.FONT, 18, "bold"),
+            text_color="#FDFCF9"
         )
         country_name_label.pack(side="left", padx=5)  # ✅ Aligned next to "Country:"
 
@@ -589,16 +591,17 @@ class RecipeViewer:
         self.create_recipes_section(content_frame)
 
         # Back Button Frame
-        button_frame = ctk.CTkFrame(self.frame, fg_color="#3A3D40", height=60)
+        button_frame = ctk.CTkFrame(self.frame, fg_color="#C4A484", height=60)
         button_frame.pack(side="bottom", fill="x")
         button_frame.pack_propagate(False)  # Prevent frame from shrinking
 
         back_button = ctk.CTkButton(
             button_frame,
             text="Back",
-            font=("Arial", 30, "bold"),
-            fg_color="#D32F2F",
-            hover_color="#E53935",
+            font=(Constants.FONT, 30, "bold"),
+            fg_color=Constants.MILK,
+            text_color=Constants.LIGHT_GREY,
+            hover_color=Constants.DARK_GREY,
             corner_radius=10,
             command=lambda: self.cooking_class.create_recipe_page(self.difficulty, self.foods)
         )
@@ -614,15 +617,15 @@ class RecipeViewer:
         ingredients_title = ctk.CTkLabel(
             ingredients_container,
             text="Ingredients",
-            font=("Arial", 30, "bold"),
-            text_color="white"
+            font=(Constants.FONT, 30, "bold"),
+            text_color=Constants.MILK
         )
         ingredients_title.pack(pady=10, fill="x")
 
         # Create scrollable frame for ingredients
         ingredients_scroll = ctk.CTkScrollableFrame(
             ingredients_container,
-            fg_color="#3C3D40",
+            fg_color=Constants.DARK_BROWN,
             corner_radius=10,
             orientation="vertical"
         )
@@ -633,8 +636,8 @@ class RecipeViewer:
             label = ctk.CTkLabel(
                 ingredients_scroll,
                 text=f"- {ingredient}",
-                font=("Arial", 18),
-                text_color="white",
+                font=(Constants.FONT, 18),
+                text_color=Constants.MILK,
                 wraplength=400  # Increased wraplength for full width
             )
             label.pack(anchor="w", padx=20, pady=2, fill="x")
@@ -649,15 +652,15 @@ class RecipeViewer:
         recipes_title = ctk.CTkLabel(
             recipes_container,
             text="Instructions",
-            font=("Arial", 30, "bold"),
-            text_color="white"
+            font=(Constants.FONT, 30, "bold"),
+            text_color=Constants.MILK
         )
         recipes_title.pack(pady=10, fill="x")
 
         # Create scrollable frame for recipes
         recipes_scroll = ctk.CTkScrollableFrame(
             recipes_container,
-            fg_color="#3C3D40",
+            fg_color=Constants.DARK_BROWN,
             corner_radius=10,
             orientation="vertical"
         )
@@ -668,8 +671,8 @@ class RecipeViewer:
             label = ctk.CTkLabel(
                 recipes_scroll,
                 text=f"- {recipe}",
-                font=("Arial", 18),
-                text_color="white",
+                font=(Constants.FONT, 18),
+                text_color=Constants.MILK,
                 wraplength=400  # Increased wraplength for full width
             )
             label.pack(anchor="w", padx=20, pady=2, fill="x")
@@ -727,8 +730,6 @@ class CookingRecipesView:
         label = ctk.CTkLabel(self.recipe_frame, text=f"{difficulty} Recipes", font=(Constants.FONT, 50, "bold"), text_color="#D9CDBF")
         label.pack(pady=20)
 
-        self.favorites = {food: False for food in food_names}
-
         for food in food_names:
             frame = ctk.CTkFrame(self.recipe_frame, fg_color="transparent")
             frame.pack(pady=10)
@@ -738,12 +739,17 @@ class CookingRecipesView:
                                    corner_radius=15, text_color=Constants.LIGHT_GREY,
                                    command=lambda f=food: self.food_clicked(f))
             button.pack(side="left", padx=20, expand=True)
-
-            star_var = ctk.StringVar(value="☆")
+            
+            isFav = food.isFavorite()
+            star_var = ctk.StringVar(value="☆" if not isFav else "★")
 
             def toggle_star(f=food, var=star_var):
-                self.favorites[f] = not self.favorites[f]
-                var.set("★" if self.favorites[f] else "☆")
+                isFav = f.isFavorite()
+                if(isFav):
+                    f.unFavorite()
+                else:
+                    f.favorite()
+                var.set("★" if not isFav else "☆")
 
             star_button = ctk.CTkButton(frame, textvariable=star_var, font=("Segoe UI", 40),
                                         fg_color="transparent", text_color="yellow", hover_color="#676A6D",

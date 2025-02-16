@@ -1,6 +1,8 @@
+import os
 import requests
 import json
 from src.Meals.Food import Food
+import pickle
 class Recipes:
     TOTAL_MEALS = 15
     EACH = TOTAL_MEALS//3
@@ -37,7 +39,6 @@ class Recipes:
     def getHard(self):
         assert self.meals, "No meals"
         return self.meals[-self.EACH:]
-
     
 # a = Recipes()
 

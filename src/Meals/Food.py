@@ -16,20 +16,21 @@ class Food:
         current = set()
         if os.path.exists(self.FAVFOOD_DIR):
             with open(self.FAVFOOD_DIR, "rb") as inp:
-                current = pickle.load(inp)
-        current.add(self)
+                try:
+                    current = pickle.load(inp)
+                except:
+                    pass
+        current.add(self.__hash__())
         with open(self.FAVFOOD_DIR, "wb") as out:
             pickle.dump(current,out,pickle.HIGHEST_PROTOCOL)
     
     def unFavorite(self):
-        current = []
+        current = set()
         if os.path.exists(self.FAVFOOD_DIR):
             with open(self.FAVFOOD_DIR, "rb") as inp:
                 current = pickle.load(inp)
         if current:
-            for i,food in enumerate(current):
-                if food.id ==self.id:
-                    current.pop(i)
+            current.discard(self.__hash__())
             with open(self.FAVFOOD_DIR, "wb") as out:
                 pickle.dump(current,out,pickle.HIGHEST_PROTOCOL)
                 
@@ -37,6 +38,6 @@ class Food:
         if os.path.exists(self.FAVFOOD_DIR):
             with open(self.FAVFOOD_DIR, "rb") as inp:
                 current = pickle.load(inp)
-                if self in current:
+                if self.__hash__() in current:
                     return True
         return False

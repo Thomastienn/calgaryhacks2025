@@ -1,6 +1,6 @@
 import requests
 import json
-from Food import Food
+from src.Meals.Food import Food
 class Recipes:
     TOTAL_MEALS = 15
     EACH = TOTAL_MEALS//3
